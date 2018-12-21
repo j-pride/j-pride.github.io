@@ -1673,27 +1673,49 @@
 			text-decoration: none;
 		}
 
-	h2 {
+	h1 {
 		font-size: 1.6em;
 		line-height: 1.5em;
 	}
 
-	h3 {
+	.title {
+		padding-bottom: 10px;
+		border-bottom: solid 1px;
+		border-bottom-color: #e3e3e3;
+	}
+	
+	#TOC { 
+		background-color:#fcfcd6;
+		padding: 10px 1px 10px 0px;
+		padding-bottom: 1px;
+		margin-bottom: 20px;
+	}
+
+	#TOC li {
+		font-size: 1.2em;
+		list-style-type:none;
+	}
+	
+	#TOC li li {
+		font-size: 0.8em;
+	}
+	
+	h2 {
 		font-size: 1.2em;
 		line-height: 1.5em;
 	}
 
-	h4 {
+	h3 {
 		font-size: 1em;
 		line-height: 1.5em;
 	}
 
-	h5 {
+	h4 {
 		font-size: 0.9em;
 		line-height: 1.5em;
 	}
 
-	h6 {
+	h5 {
 		font-size: 0.7em;
 		line-height: 1.5em;
 	}
@@ -1719,25 +1741,22 @@
 
 	code {
 		border-radius: 0;
-		border: solid 1px;
-		font-family: "Courier New", monospace;
-		font-size: 0.9em;
-		margin: 0 0.25em;
-		padding: 0.25em 0.65em;
+		border-style: solid;
+		border-width: 1px 0px;
+		font: inherit;
 	}
 
 	pre {
 		-webkit-overflow-scrolling: touch;
-		font-family: "Courier New", monospace;
-		font-size: 0.9em;
-		margin: 0 0 2em 0;
 	}
 
 		pre code {
 			display: block;
-			line-height: 1.75em;
-			padding: 1em 1.5em;
+			line-height: 1.5em;
+			padding: 0.3em 0.7em;
 			overflow-x: auto;
+			background-color:#ffffcc;
+			margin-bottom: 2em;
 		}
 
 	hr {
@@ -2363,7 +2382,7 @@
 
 	ul {
 		list-style: disc;
-		margin: 0 0 2em 0;
+		margin: 0 0 1em 0;
 		padding-left: 1em;
 	}
 
@@ -3861,17 +3880,3 @@
 		color:#fff;
 		text-decoration:none;
 	}
-
-/* Tables to display souce code */
-
-	.sourcecode-table {
-		cellspacing:10;
-		cellpadding:10;
-		background-color:#ffffcc;
-	}
-	
-	.sourcecode-table pre {
-		font: inherit;
-		margin: 0;
-	}
-	

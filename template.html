@@ -22,10 +22,10 @@
 		<!-- Three -->
 			<section id="three" class="wrapper">
 				<div class="inner">
-					<h2 id="content">SUB PAGE TITLE GOES HERE</h2>
+					<h1 id="content">SUB PAGE TITLE GOES HERE</h1>
 					<hr class="major" />
 
-					<h3>Up and working in 15 minutes</h3>
+					<h2>Up and working in 15 minutes</h2>
 						This short tutorial allows a quick introduction into the general working principles of PriDE, based on a simple example. It takes less than 15 minutes to set up a primitive PriDE application which allows to perform basic operations on a simple database table. The directory examples/quickstart contains the complete source code für the tutorial example.<br>
 						Setting up an application includes the following steps:
 						<ul>
@@ -38,11 +38,11 @@
 						I.e. there's only 3 minutes time for each step now, so let's hurry up ;-)
 						<p>
 						
-					<h3>Preparing the environment</h3>
+					<h2>Preparing the environment</h2>
 						Working with PriDE requires to add the library pride.jar into the CLASSPATH of the working environment, as well as the JDBC driver of the database to access. E.g. in case of a MySQL 4 database this is the library mysql-connector-java-2.0.14-bin.jar, for Oracle 9 the file ojdbc14.jar.
 						<p>
 						
-					<h3>Database configuration</h3>
+					<h2>Database configuration</h2>
 						In the next step, the required database tables must be created. PriDE does
 						not provide its own tool for that but assumes one being included in the
 						database  installation. If nothing appropriate is available, the open source
@@ -50,14 +50,11 @@
 						for configuration of all common databases. The tutorial examples uses a database
 						table according to the following definition:
 						<p>
-						<table class="sourcecode-table">
-							<tr><td><pre>
-create table customer (
+						<pre><code>create table customer (
 	id integer not null primary key,
 	name varchar(20),
 	first_name varchar(30)
-);</pre> </td> </tr>
-						</table>
+);</code></pre>
 						
 			</section>
 
