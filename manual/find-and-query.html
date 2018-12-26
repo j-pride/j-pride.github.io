@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Find and query</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="../assets/css/main.css" />
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+		<div class="subpage-menu">
+			<a href="index.html"><i class="fa fa-home"></i> Home</a>
+		</div>
+		<section id="three" class="wrapper">
+			<div class="inner">
+<header id="title-block-header">
+<h1 class="title">Find and query</h1>
+</header>
+<nav id="TOC">
+<ul>
+<li><a href="#find">Find</a></li>
+</ul>
+</nav>
+<p>The terms “find” and “query” for data retrieval are used in the same sense in PriDE as you may know it from other persistence concepts. Finding means to select data with the expectation to retrieve 1 result or none treating the presence of multiple results as an exception case. The most common example is a selection by primary key. A query means to select data with an unpredictable number of result. PriDE is designed to take “unpredictable” literally and allows to process even millions of results in an efficient way in Java.</p>
+<h2 id="find">Find</h2>
+<p>Examples for finding a record with PriDE were already part of the <a href="quick-start-tutorial.html">quick start tutorial</a> and the chapter about <a href="entity-adapter-and-descriptor.html">entity, adapter, and descriptor</a>. But let’s go into some details here for a deeper understanding. The important things to know:</p>
+<ul>
+<li>No matter if you are working with hybrid objects or a separation of entity and adapter - PriDE never creates entities for you but expects you to provide them.</li>
+<li>Find operations work like a query-by-example. You provide an entity with all the primary key fields initialized and call the find() method without parameters. This is a method of the entity class itself when using hybrid entities, otherwise it is a method of the corresponding adapter class.</li>
+<li>The result of the find operation is placed in the same entity which you provided the key fields by. The boolean return value of the finder tells the caller if there was actually a matching record found.</li>
+</ul>
+<p>When you are working with hybrid entities,</p>
+				</div>
+			</section>
+
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/skel.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]-->
+			<script src="assets/js/main.js"></script>
+</body>
+</html>
