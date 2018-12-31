@@ -3881,3 +3881,28 @@
 		color:#fff;
 		text-decoration:none;
 	}
+
+	.subpage-navigation {
+		position: fixed;
+		z-index: 2;
+		top: 0px;
+		left: 10px;
+		color:#fff;
+	}
+	
+	.subpage-navigation a {
+		color:#fff;
+		text-decoration:none;
+	}
+
+	.subpage-navigation #prev:before {
+		font-family: FontAwesome;
+		font-weight: 400;
+		content: "\f053";
+	}
+
+	.subpage-navigation #next:after {
+		font-family: FontAwesome;
+		font-weight: 400;
+		content: "\f054";
+	}
