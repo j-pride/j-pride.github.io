@@ -27,57 +27,78 @@
 </header>
 <nav id="TOC">
 <ul>
-<li><a href="#what-is-pride">What is PriDE</a><ul>
-<li><a href="#section"></a></li>
+<li><a href="#about-pride">About PriDE</a><ul>
+<li><a href="#about-this-manual">About this manual</a></li>
 </ul></li>
 <li><a href="#quick-start-tutorial">Quick Start Tutorial</a><ul>
-<li><a href="#up-and-working-in-15-minutes">Up and working in 15 minutes</a></li>
 <li><a href="#preparing-the-development-project">Preparing the development project</a></li>
 <li><a href="#database-table-design">Database table design</a></li>
 <li><a href="#writing-or-generating-entity-classes">Writing or generating entity classes</a></li>
 <li><a href="#writing-application-classes">Writing application classes</a></li>
+<li><a href="#running-the-application">Running the application</a></li>
+<li><a href="#before-you-go-ahead">Before you go ahead…</a></li>
 </ul></li>
 <li><a href="#entity-adapter-and-descriptor">Entity, Adapter, and Descriptor</a><ul>
 <li><a href="#descriptor-structure">Descriptor structure</a></li>
 </ul></li>
-<li><a href="#find-and-query">Find and query</a><ul>
+<li><a href="#find-and-query">Find and Query</a><ul>
 <li><a href="#find">Find</a></li>
+<li><a href="#query">Query</a></li>
+<li><a href="#selection-criteria">Selection criteria</a><ul>
+<li><a href="#wherecondition">WhereCondition</a></li>
+<li><a href="#arbitrary-criteria">Arbitrary criteria</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#insert-update-and-delete">Insert, Update, and Delete</a><ul>
+<li><a href="#insert">Insert</a></li>
+<li><a href="#transactions">Transactions</a></li>
+<li><a href="#update">Update</a></li>
+<li><a href="#delete">Delete</a></li>
 </ul></li>
 </ul>
 </nav>
-<h1 id="what-is-pride">What is PriDE</h1>
+<h1 id="about-pride">About PriDE</h1>
 <p>PriDE ist the Java world’s smallest object-relational mapper for SQL databases. O/R mapping is the wide-spread approach to map records of a relation SQL database to objects of an object-oriented application. The application should operate on its persistent entities as object-oriented as possible, not regarding that some of them come from a database or must be saved in one. PriDE provides functionality to</p>
 <ul>
 <li>Describe the mapping of database tables to Java classes</li>
 <li>Read and write data records without accessing the complicated JDBC interface, and - as far as possible - don’t write any SQL at all</li>
-<li>Simplify the assembly of complicated expressions and selection conditions</li>
+<li>Simplify the assembly of complicated SQL expressions and selection conditions</li>
 </ul>
-<p>While O/R mapping is usually based on single-object operations, PriDE also supports efficient database mass processing within Java. The goal is to avoid moving application logic into procedures within the database as far as possible and not to break the DRY principle. However, if stored procedures and functions are required sometimes, PriDE provides a convenient way to call them.</p>
+<p>While O/R mapping is usually based on single-object operations, PriDE also supports efficient database mass processing within Java. The goal is to avoid shifting application logic into procedures within the database as far as possible and not to break the DRY principle. However, if stored procedures and functions are required sometimes, PriDE provides a convenient way to call them.</p>
 <p>PriDE was designed for usage in JSE and JEE environments and is used identically everywhere except some initialization operations and the transaction management. The framework follows a very pragmatic approach to provide basic development support quickly and easily. It does not claim to conform with established persistence management standards but follows common design patterns and proved to be suitable in mission-critical projects over many years. The <a href="#feature-list">detailed feature list</a> may help to figure out whether PriDE meets the requirements of individual development projects, and allows to roughly compare this toolkit with existing well-known O/R mapping products and standards like JPA, JOOQ or MyBatis.</p>
 <p>PriDE is so small that it can actually be understood in any single line of its code, providing the developer full control over how data is exchanged between an SQL database and a Java application. The runtime library is less than 200 kByte in size without any dependencies beside the JDBC driver library of the database in use.</p>
 <p>Did you ever wonder how to conveniently access your SQLite database in a mobile application which has to keep its footprint small? Well, here is your answer :-)</p>
 <p>Or did you ever worked in a multi-million lines of code project and got the feeling that JPA magic causes more loss of control than convenience? Guess what the alternative may be.</p>
 <p>The chapter <a href="#pride-design-principles">PriDE design principles</a> gives an overview about the concepts which the framework is based on. However, before diving into more theory, it is recommended to walk through the <a href="#quick-start-tutorial">quick start tutorial</a> and get into touch with the real world.</p>
-<h3 id="section"></h3>
+<h2 id="about-this-manual">About this manual</h2>
+<p>This manual gives you a complete overview about PriDE’s standard functionality, design patterns and design principles. It is not mandatory to work through all the details unless you want to become an expert. However, it is strongly recommended to begin with the <a href="#quick-start-tutorial">quick start tutorial</a> as many code fragments in other chapters come back to the quick start example. The chapters <a href="#find-and-query">Find and Query</a> and <a href="#insert-update-and-delete">Insert, Update, and Delete</a> describe the core functionality you should become familiar with. All other chapters describe special aspects which you can dive into, when the time has come.</p>
+<p>Many code fragments in this manual refer to existing example code which is either included in every PriDE delivery or can be <a href="https://github.com/j-pride/pride.pm/tree/master/examples">downloaded from GitHub</a>.</p>
+<p>At January 2019, the PriDE 3 manual is work in progress. Beside the core chapters above there are chapters coming soon for the following aspects</p>
+<h4 id="entity-derivation">Entity Derivation</h4>
+<h4 id="joins">Joins</h4>
+<h4 id="optimistic-locking">Optimistic Locking</h4>
+<h4 id="jse-jee-and-resourceaccessor">JSE, JEE, and ResourceAccessor</h4>
+<h4 id="multiple-databases">Multiple Databases</h4>
+<h4 id="mass-operations">Mass Operations</h4>
+<h4 id="sql-expression-builder">SQL Expression Builder</h4>
+<h4 id="pride-design-principles">PriDE Design Principles</h4>
+<p>A good information source for features which are not yet covered by this manual are PriDE’s unit tests which you can find on <a href="https://github.com/j-pride/pride.pm/tree/master/src/test/java/basic">GitHub</a>. You may also consult the manual from PriDE version 2 which is available on <a href="http://pride.sourceforge.net/PriDE.html">SourceForge</a>.</p>
 <h1 id="quick-start-tutorial">Quick Start Tutorial</h1>
-<h2 id="up-and-working-in-15-minutes">Up and working in 15 minutes</h2>
-<p>This short tutorial gives an introduction into the general working principles of PriDE, based on a simple example. It takes less than half an hour to set up a simple PriDE application which allows to perform basic operations on a single database table. The directory examples/quickstart of the PriDE delivery contains the complete source code for the tutorial example.</p>
+<p>This short tutorial gives an introduction into the general working principles of PriDE, based on a simple example. It takes less than half an hour to set up a simple PriDE application which allows to perform basic operations on a single database table. The directory <a href="https://github.com/j-pride/pride.pm/tree/master/src/examples/java/quickstart">examples/quickstart</a> of the PriDE delivery contains the complete source code for the tutorial example.</p>
 <p>Setting up an application includes the following steps:</p>
 <ul>
 <li>Preparing the development project</li>
 <li>Database table design</li>
 <li>Writing or generating entity classes</li>
 <li>Writing application classes</li>
-<li>Calling the application</li>
+<li>Running the application</li>
 </ul>
 <p>I.e. there’s only a few minutes time for each step now, so let’s hurry up ;-)</p>
 <h2 id="preparing-the-development-project">Preparing the development project</h2>
-<p>Working with PriDE requires to add the library pride.jar into the CLASSPATH of the working environment, as well as the JDBC driver of the database to access. E.g. in case of a MySQL 6 database this is the library mysql-connector-java-6.0.6.jar, for Oracle 11 the library ojdbc8.jar, and for HSQL 2.x the library hsqldb-2.x.y.jar. The ultra light in-memory database HSQL is the best choice for first experiments. Driver class, database URL, database user, and password are supposed to be provided as system properties in this tutorial examples. For HSQL and its default database, the properties look like this:</p>
-<pre><code>pride.driver=org.hsqldb.jdbc.JDBCDriver
-pride.db=jdbc:hsqldb:test
-pride.user=sa
-pride.password=root
-pride.dbtype=hsql
+<p>Working with PriDE requires to add the library pride.jar into the CLASSPATH of the working environment, as well as the JDBC driver of the database to access. E.g. in case of a MySQL 6 database this is the library mysql-connector-java-6.0.6.jar, for Oracle 11 the library ojdbc8.jar, for HSQL 2.x the library hsqldb-2.x.y.jar, and for SQLite 3 the library sqlite-jdbc-3.x.y.jar. The ultra light database SQLite is the best choice for first experiments. Driver class, database URL, database user, and password are supposed to be provided as system properties in this tutorial examples. For SQLite and a local example database, user and password can be omitted and the properties look like this:</p>
+<pre><code>pride.dbtype=sqlite
+pride.driver=org.sqlite.JDBC
+pride.db=jdbc:sqlite:pride.examples.db
 pride.logfile=sql.log</code></pre>
 <p>Providing the DB type is recommended, to keep PriDE from making a wrong guess, and logging all SQL operations is usually a good idea - especially for beginners.</p>
 <h2 id="database-table-design">Database table design</h2>
@@ -87,19 +108,23 @@ pride.logfile=sql.log</code></pre>
     name varchar(20),
     first_name varchar(30)
 );</code></pre>
-<p>Add this table now to your HSQL database, using HSQL’s command shell.</p>
+<p>Add this table now to your SQLite database, using SQLite’s command shell or by running the following Java class being included in the PriDE example code:</p>
+<pre><code>java
+-Dpride.dbtype=sqlite
+-Dpride.driver=org.sqlite.JDBC
+-Dpride.db=jdbc:sqlite:pride.examples.db
+-Dpride.logfile=sql.log
+util.CreateCustomerTable</code></pre>
 <h2 id="writing-or-generating-entity-classes">Writing or generating entity classes</h2>
 <p>Accessing a table via PriDE requires a corresponding entity class (usually a simple Java Bean) and a mapping descriptor object. 1:1 mappings of a database table to a Java class can be generated with a code generator provided with PriDE. For the table CUSTOMER above, the source code for a corresponding entity class Customer.java and an incorporated descriptor can be generated by the following call:</p>
 <pre><code>java
--Dpride.driver=org.hsqldb.jdbc.JDBCDriver
--Dpride.db=jdbc:hsqldb:test
--Dpride.user=sa
--Dpride.password=root
--Dpride.dbtype=hsql
+-Dpride.dbtype=sqlite
+-Dpride.driver=org.sqlite.JDBC
+-Dpride.db=jdbc:sqlite:pride.examples.db
 -Dpride.logfile=sql.log
 pm.pride.util.generator.EntityGenerator CUSTOMER quickstart.Customer &gt; Customer.java</code></pre>
-<p>Note that you may also generate the descriptive parts in a <em>separate</em> class to keep the entity bean class free from database aspects. For the tutorial example under examples/quickstart we generate a hybrid class which looks like this:</p>
-<pre><code>public class Customer extends MappedObject&lt;Customer&gt; {
+<p>Note that you may also generate the descriptive parts in a <em>separate</em> class to keep the entity bean class free from database aspects. For the tutorial example under <a href="https://github.com/j-pride/pride.pm/tree/master/src/examples/java/quickstart">examples/quickstart</a> we generate a hybrid class which looks like this:</p>
+<pre><code>public class Customer extends MappedObject {
     public static final String TABLE = &quot;CUSTOMER&quot;;
     public static final String COL_ID = &quot;id&quot;;
     public static final String COL_NAME = &quot;name&quot;;
@@ -171,17 +196,21 @@ public void queryByName( String name )
         } while(ri.next());
     }
 }</code></pre>
+<h2 id="running-the-application">Running the application</h2>
 <p>The tutorial example under examples/quickstart includes the file CustomerClient.java, providing an interactive test client. Calling the client with its system property based initialization looks like this:</p>
 <pre><code>java
--Dpride.driver=org.hsqldb.jdbc.JDBCDriver
--Dpride.db=jdbc:hsqldb:test
--Dpride.user=sa
--Dpride.password=root
--Dpride.dbtype=hsql
+-Dpride.dbtype=sqlite
+-Dpride.driver=org.sqlite.JDBC
+-Dpride.db=jdbc:sqlite:pride.examples.db
 -Dpride.logfile=sql.log
 quickstart.CustomerClient</code></pre>
 <p>Play around with the client and then check the working directory. You will find a file sql.log created by PriDE which logs all the SQL statements that resulted from your persistence operation calls. The log file is plain SQL, so if you encounter any unexpected persistence behavior in you application, you can copy the commands from the log and run them from you database’s SQL shell. This is a big advantage over the command logging of most other persistence frameworks.</p>
-<p>That’s it! The tutorial example already introduces the most important basic elements of PriDE. To understand what’s going on behind the scenes of the 5 steps above, you will find all aspects explained in detail in the manual.</p>
+<p>Actually PriDE is working with plain SQL by default rather than with so-called “bind variables”. So what you see in the log file is exactly what PriDE executes against the database resp. its JDBC driver. If you like to change to bind variables as default, you can add the configuration property <code>-Dpride.bindvars=on</code>. Restart the CustomerClient with this system property set, run some commands and check the log file again. You still see plain SQL but the values of insert and select statements are now preceded by a ? indicating that the value was passed to the database via a bind variable. You can still copy every command from the log to an SQL shell - you only have to remove its question marks before running it interactively. You won’t find many persistence managers with a comfortable SQL logging like that.</p>
+<p>A meaningful usage of bind variables becomes a relevant issue for heavily accessed databases and will be discussed in the <a href="#mass-operations">mass operation chapter</a>.</p>
+<h4 id="thats-it">That’s it!</h4>
+<p>The tutorial example already introduces the most important basic elements of PriDE. To understand what’s going on behind the scenes of the 5 steps above, you will find all aspects explained in detail in the manual.</p>
+<h2 id="before-you-go-ahead">Before you go ahead…</h2>
+<p>Before you go on you should simplify the configuration in a way that you don’t have to provide system properties every time you call a client. Although PriDE does not <em>require</em> any descriptive languages, they are sometimes quite helpful. To simplify the playing-around with examples, all client programs included in the PriDE examples use the class util.ResourceAccessorExampleConfig for initialization. It allows to assemble the configuration from two sources: system properties as it was introduced so far and a property file config/pride.examples.config.properties. As the configuration properties probably stay unchanged through all your experiments, you should transfer all your command line system properties to file (without the leading “-D” of course) and start your client programs without passing any system properties at all. To run the entity generator with the file-based configuration call the wrapper class util.EntityGeneratorWithExampleConfig which is also included in the examples.</p>
 <h1 id="entity-adapter-and-descriptor">Entity, Adapter, and Descriptor</h1>
 <p>The concept of O/R mapping requires three basic building blocks:</p>
 <ul>
@@ -201,9 +230,11 @@ quickstart.CustomerClient</code></pre>
 <p>Let’s have a look on the more sophisticated pattern of separate adapter classes. You can have a look on the general structure by generating separate classes for the quick start example table. The pure entity class can be generated by the following command:</p>
 <pre><code>java
 -D... see quick start tutorial
-pm.pride.util.generator.EntityGenerator CUSTOMER quickstart.Customer -b &gt; Customer.java</code></pre>
+pm.pride.util.generator.EntityGenerator CUSTOMER adapter.CustomerEntity -b &gt; CustomerEntity.java</code></pre>
 <p>The parameter -b tells the generator to create only an entity class without descriptor. The result is an ordinary POJO class:</p>
-<pre><code>public class Customer implements Cloneable, java.io.Serializable {
+<pre><code>package adapter;
+
+public class CustomerEntity implements Cloneable, java.io.Serializable {
     private long id;
     private String name;
     private String firstName;
@@ -216,26 +247,29 @@ pm.pride.util.generator.EntityGenerator CUSTOMER quickstart.Customer -b &gt; Cus
     public void setName(String name) { this.name = name; }
     public void setFirstName(String firstName) { this.firstName = firstName; }
 
-    public Customer(long id) {
+    // re-constructor
+    public CustomerEntity(long id) {
         setId(id);
     }
 
-    public Customer() {}
+    public CustomerEntity() {}
 }</code></pre>
 <p>The “re-constructor” is an additional constructor getting passed a value for all the attributes making up the entity’s primary key. This of interest for find operations.</p>
 <p>Generating the corresponding adapter class looks like this:</p>
 <pre><code>java
 -D... see quick start tutorial
-pm.pride.util.generator.EntityGenerator CUSTOMER quickstart.CustomerDBA quickstart.Customer &gt; CustomerDBA.java</code></pre>
-<p>The first parameter after the table name specifies the class to generate - in this case a class called CustomerDBA in package quickstart. The second parameter is the name of a entity class the adapter should refer to. The result looks like this:</p>
-<pre><code>public class CustomerDBA extends ObjectAdapter&lt;Customer&gt; {
+pm.pride.util.generator.EntityGenerator CUSTOMER adapter.CustomerAdapter adapter.CustomerEntity &gt; CustomerAdapter.java</code></pre>
+<p>The first parameter after the table name specifies the class to generate - in this case a class called CustomerAdapter in package adapter. The second parameter is the name of a entity class the adapter should refer to. The result looks like this:</p>
+<pre><code>package adapter;
+
+public class CustomerAdapter extends ObjectAdapter {
     public static final String TABLE = &quot;CUSTOMER&quot;;
     public static final String COL_ID = &quot;id&quot;;
     public static final String COL_NAME = &quot;name&quot;;
     public static final String COL_FIRST_NAME = &quot;first_name&quot;;
 
     protected static final RecordDescriptor red = new RecordDescriptor
-        (Customer.class, TABLE, null, new String[][] {
+        (CustomerEntity.class, TABLE, null, new String[][] {
             { COL_ID,   &quot;getId&quot;,   &quot;setId&quot; },
             { COL_NAME,   &quot;getName&quot;,   &quot;setName&quot; },
             { COL_FIRST_NAME,   &quot;getFirstName&quot;,   &quot;setFirstName&quot; },
@@ -246,19 +280,19 @@ pm.pride.util.generator.EntityGenerator CUSTOMER quickstart.CustomerDBA quicksta
     private static String[] keyFields = new String[] { COL_ID };
     public String[] getKeyFields() { return keyFields; }
 
-    CustomerDBA(Customer entity) { super(entity); }
+    CustomerAdapter(CustomerEntity entity) { super(entity); }
 }</code></pre>
-<p>All what the adapter class has to provide is a RecordDescriptor and an optional list of column names making up the entities primary key. Based on that, the class inherits all entity-related persistence capabilities from class pm.pride.ObjectAdapter. Adapters always operate on an instance of the entity class which must be passed in the adapter’s constructor. Finding a customer by its primary ID looks like this when using separate adapter classes:</p>
+<p>All what the adapter class has to provide is a RecordDescriptor and an optional list of column names making up the entity’s primary key. Based on that, the class inherits all entity-related persistence capabilities from class pm.pride.ObjectAdapter. Adapters always operate on an instance of the entity class which must be passed in the adapter’s constructor. Finding a customer by its primary ID looks like this when using separate adapter classes:</p>
 <pre><code>// Create a customer entity, initialized with a primary key value of 1
-Customer customer = new Customer(1);
+CustomerEntity customer = new CustomerEntity(1);
 
 // Create an adapter based on the entity
-CustomerDBA dba = new CustomerDBA(customer);
+CustomerAdapter adapter = new CustomerAdapter(customer);
 
 // Call the adapter&#39;s find method to find a customer by primary key 1.
-// The primary key value is read from the entity passed in the adapters constructor
+// The primary key value is read from the entity passed in the adapter&#39;s constructor
 // The result (if any) is written to the same entity
-dba.find();</code></pre>
+adapter.find();</code></pre>
 <p>As you see, every persistence operation now requires one additional line of code to create the adapter. Especially when you design a multi-threaded application, it is important to know that adapter and entity instances are not supposed to be shared among multiple threads. So creating new instances in every operation is the prefered technique and is usually not a considerable code complication.</p>
 <p>If you want to minimize the amount of code, you are free to invent your own adapter concept. Have a look on the base classes pm.pride.ObjectAdapter for the adapter above and pm.pride.MappedObject for the hybrid variant from the <a href="#quick-start-tutorial">quick start tutorial</a>. Both are minimalistic implementations of the mix-in pm.pride.DatabaseAdapterMixin which is the actual provider for all entity-related persistence operations. It is in turn based on the static methods of the class pm.pride.DatabaseAdapter. Using this class or the mix-in you could easily produce a generic adapter being responsible for multiple entity types similar to JPA’s EntityManager interface.</p>
 <p>One note concerning packages: When you actually use the pattern of separate adapters in a sophisticated architecture, you should consider generating entity and adapter classes in different packages. Only the entity classes should be part of the interface for dependent code while the adapter classes should completely be hidden behind facade components as proposed in the wide-spread <a href="https://martinfowler.com/eaaCatalog/repository.html">repository pattern</a>.</p>
@@ -276,16 +310,218 @@ dba.find();</code></pre>
 <p>The methods are the ones which the adapter is supposed to transport entity attributes to the database via JDBC and vice versa. The getter methods’ return type implies which methods the adapter uses to access JDBC statements and result sets and how to translate the values to SQL syntax. Getters are mandatory whereas setters may be null in case of entity types that are never supposed to be written to the database. A typical example for this case are entity classes representing the result of SQL joins (see chapter <a href="#joins">Joins</a>).</p></li>
 </ul>
 <p>The RecordDescriptor class has a few more constructors concerned with joins and <a href="#multiple-databases">accessing multiple databases</a>, but that’s not important for now. The basic structure described above is what you work with most of the time.</p>
-<h1 id="find-and-query">Find and query</h1>
-<p>The terms “find” and “query” for data retrieval are used in the same sense in PriDE as you may know it from other persistence concepts. Finding means to select data with the expectation to retrieve 1 result or none treating the presence of multiple results as an exception case. The most common example is a selection by primary key. A query means to select data with an unpredictable number of result. PriDE is designed to take “unpredictable” literally and allows to process even millions of results in an efficient way in Java.</p>
+<h1 id="find-and-query">Find and Query</h1>
+<p>The terms “find” and “query” for data retrieval are used in the same sense in PriDE as you may know it from other persistence concepts. Finding means to select data with the expectation to retrieve 1 result or none treating the presence of multiple results as an exception case. The most common example is a selection by primary key.</p>
+<p>A query means to select data with an unpredictable number of result. PriDE is designed to take “unpredictable” literally and allows to process even millions of results in an efficient way in Java.</p>
 <h2 id="find">Find</h2>
 <p>Examples for finding a record with PriDE were already part of the <a href="#quick-start-tutorial">quick start tutorial</a> and the chapter about <a href="#entity-adapter-and-descriptor">entity, adapter, and descriptor</a>. But let’s go into some details here for a deeper understanding. The important things to know:</p>
 <ul>
 <li>No matter if you are working with hybrid objects or a separation of entity and adapter - PriDE never creates entities for you but expects you to provide them.</li>
-<li>Find operations work like a query-by-example. You provide an entity with all the primary key fields initialized and call the find() method without parameters. This is a method of the entity class itself when using hybrid entities, otherwise it is a method of the corresponding adapter class.</li>
-<li>The result of the find operation is placed in the same entity which you provided the key fields by. The boolean return value of the finder tells the caller if there was actually a matching record found.</li>
+<li>Find operations work like a query-by-example. You provide an entity with all the primary key fields initialized and call the find() or findx() method without parameters. This is a method of the entity class itself when using hybrid entities, otherwise it is a method of the corresponding adapter class.</li>
+<li>The result of the find operation is placed in the same entity which you provided the key fields by. The boolean return value of the find() method tells the caller if there was actually a matching record found. The findx() method reports a missing match by an exception which if of interest for situations where a missing result is a unexpected case. Think of typical navigation like retrieving the customer who placed an order. You usually don’t expect the customer not being present in the database.</li>
 </ul>
-<p>When you are working with hybrid entities,</p>
+<p>When you are working with a generated hybrid entity, a find operation by primary key fields is a single line of code like that:</p>
+<pre><code>Customer customer = new Customer(1);</code></pre>
+<p>PriDE’s generator produces a so-called “re-constructor” if the referred database table has a primary key. The re-constructor expects a parameter for all attributes making up the primary key, initializes the entity accordingly and calls the entity’s findx() method. I.e. if the retrieval by primary key fails, the re-constructor throws a pm.pride.FindException. The FindException is derived from java.sql.SQLException which must be handled anyway.</p>
+<p>When you are working with separate adapter classes, the same operation takes two lines of code:</p>
+<pre><code>CustomerEntity customer = new CustomerEntity(1);
+new CustomerAdapter(customer).findx();</code></pre>
+<p>Why isn’t it simpler, e.g.</p>
+<pre><code>// ATTENTION: This is NOT default PriDE code!!
+CustomerEntity customer = new CustomerAdapter().findx(1);
+// This isn&#39;t too
+CustomerEntity customer = entityManager.findx(CustomerEntity.class, 1);</code></pre>
+<p>Well, all these variants imply that the adapter creates an entity, and this would violate a basic principle of PriDE. However, as mentioned in chapter <a href="entity-adapter-and-descriptor">Entity, Adapter, and Descriptor</a>, you are free to put those concepts on top of PriDE’s basics. PriDE is really, really small and simple and extending it by your own convenience is simple too.</p>
+<h2 id="query">Query</h2>
+<p>Whenever selecting multiple records from the database, PriDE returns a pm.pride.ResultIterator to iterate through the results. The ResultIterator encapsulates a java.sql.ResultSet, i.e. it is an open database cursor which is suitable for any amount of results. Taking up the example from the <a href="#quick-start-tutorial">quick start tutorial</a>, you can select all customers from the CUSTOMER table by the following lines of code:</p>
+<pre><code>Customer customer = new Customer();
+ResultIterator ri = customer.queryAll();</code></pre>
+<p>To allow the processing of large amounts of records, the ResultIterator works slightly different from what you may be used to.</p>
+<ul>
+<li>To step through the results, you have to call the iterators next() method which returns false if there are no more results available.</li>
+<li>Instead of creating a new entity with every step, the iterator provides all results in the entity which the query was initiated from. I.e. every call of next() overwrites the data from the step before. No matter how many results you have, you will not run into memory problems when you directly process the results within the iteration loop.</li>
+<li>The first result from the query gets initially written to the entity, so the iteration process usually requires a do-while-loop rather than a while-loop.</li>
+<li>If there are no results at all, the query functions returns a ResultIterator which returns true from its isNull() method.</li>
+</ul>
+<p>Pulling all this together, an iteration for direct result processing looks like that, e.g. if we would like to print all customers to the console:</p>
+<pre><code>Customer customer = new Customer();
+ResultIterator ri = customer.queryAll();
+if (!ri.isNull()) {
+    do {
+        System.out.println(customer);
+    }
+    while(ri.next());
+}
+else {
+    System.out.println(&quot;No customers found&quot;);
+}</code></pre>
+<p>A ResultIterator must be closed when the iteration is over, because it holds an open java.sql.ResultSet inside which in turn holds an open database connection. For convenience, the ResultIterator closes its ResultSet automatically when your code iterates to the end or if there occurs a database exception while fetching results. So usually you don’t have to care about closing the iterator. For special cases, call the close() method.</p>
+<p>The direct iteration is a highly efficient option on the one hand (PriDE is a lot faster with this approach than any JPA implementation), but on the other hand it is not the typical case. Usually the amount of results is small and they don’t need to be processed on such a low layer of the application. Instead you may want to pass them as a list or array to a higher application layer where the business logic resides in. In this case, you can call appropriate functions on the ResultIterator:</p>
+<pre><code>// Extract the customers as list
+List&lt;Customer&gt; allCustomers = ri.toList(Customer.class);
+
+// Extract the customers as list with a limitation for the amount of results
+List&lt;Customer&gt; allCustomers = ri.toList(Customer.class, 100);
+
+// Extract the customers as array
+Customer[] allCustomers = ri.toArray(Customer.class);</code></pre>
+<p>Does PriDE create entities here? No, not really. The instances result from <em>cloning</em> the original entity object which the query was initiated from. I.e. the entity class itself is responsible for creating new instances by implementing the java.lang.Clonable interface and overriding the clone() method with public visibility. All entity types generated by PriDE have this function implemented based on Java’s protected default implementation. This is a single-line implementation, so it’s very simple to provide even if you are not using the generator.</p>
+<p>In general it is strongly recommended to define a base class for all entity types where all those standard capabilities are encapsulated. Not only a clone() implementation but also s reasonable default (reflection-based) toString() method and maybe even a set of standard attributes as explained in chapter <a href="#entity-derivation">Entity Derivation</a>.</p>
+<p>Examples for find and query code can by found in the class QueryClient in the directory <a href="https://github.com/j-pride/pride.pm/tree/master/src/examples/java/query">examples/query</a> of the PriDE delivery.</p>
+<h2 id="selection-criteria">Selection criteria</h2>
+<p>PriDE has a few different features to assemble SQL where-clauses for queries:</p>
+<ul>
+<li>Query by example</li>
+<li>The builder class WhereCondition</li>
+<li>Completely self-defined conditions</li>
+</ul>
+<p>Query-by-example is something you already come across in the section about <a href="#find">finder methods</a>. It is addressed by the method queryByExample(String… dbfields) which is available in every adapter and every hybrid entity class. The where-clause is assembled from an equality expression for all the database columns being passed to the function call where the values are taken from the corresponding attributes of the entity. Of course, the entity must be initialized accordingly first. Taking up the Customer entity from the <a href="#quick-start-tutorial">quick start tutorial</a>, the following query-by-example would allow to find all customers with first name “Peter”:</p>
+<pre><code>Customer customer = new Customer();
+customer.setFirstName(&quot;Peter&quot;);
+ResultIterator ri = customer.queryByExample(Customer.COL_FIRST_NAME);</code></pre>
+<p>The query takes all the specified columns into account, considering also Null-values in appropriate attributes. E.g. passing Customer.COL_FIRST_NAME, Customer.COL_NAME to the query method without setting a name value in the customer entity, the resulting SQL query will look like this:</p>
+<pre><code>select id,name,first_name from CUSTOMER where ( first_name = &#39;Peter&#39; AND name IS NULL )</code></pre>
+<p>Remember that yo can always check the SQL log file to find out what SQL statements have been assembled by PriDE. And always remember to use constants for the column names as you can see above rather than string literals. This allows you to keep track of which code depends on which aspects of your data model.</p>
+<h3 id="wherecondition">WhereCondition</h3>
+<p>Query-by-example is easy to use but limited to equality expressions. A more sophisticated tool in PriDE is the WhereCondition class. It allows to assemble more complicated queries with a fluent API as a compromise between syntax and type safety on the one hand and code readability and simplicity on the other hand. Lets start with a simple example of a where condition, producing the same query as above for an empty name and the first name “Paddy”:</p>
+<pre><code>WhereCondition byFirstNameAndEmptyName =
+    new WhereCondition(Customer.COL_FIRST_NAME, &quot;Paddy&quot;)
+    .and(Customer.COL_NAME, null);
+ResultIterator ri = new Customer().query(byFirstNameAndEmptyName);</code></pre>
+<p>The basic principle of the class is straight-forward:</p>
+<ul>
+<li>The function and() creates a sub-condition which is is AND concatenated with the condition being assembled so far. The same applies to the corresponding or() method.</li>
+<li>The and() function returns the WhereCondition itself which causes the class and its methods to become a fluent API.</li>
+<li>The and() function which only gets passed a field name/value pair produces an equality expression.</li>
+<li>The name/value pair passed to the constructor makes up the initial condition. To keep from mixing real constructor parameters with the first condition fragment, it is recommended to use the following form instead:</li>
+</ul>
+<pre><code>WhereCondition byFirstNameAndEmptyName = new WhereCondition()
+    .and(Customer.COL_FIRST_NAME, &quot;Paddy&quot;)
+    .and(Customer.COL_NAME, null);
+ResultIterator ri = new Customer().query(byFirstNameAndEmptyName);</code></pre>
+<p>It doesn’t make a difference if you start with the or() method or the and() method at the top. Both methods are available in the more flexible variant <code>xxx(String field, String operator, Object... value)</code>. The parameter <em>operator</em> is an SQL operator with the commonly known ones listed in the <em>Operator</em> interface within the WhereCondition class. Using String rather than a type-safe Enum keeps the API open for future extensions and vendor-specific operators. Multiple values can be passed for the operators WhereCondition.Operator.BETWEEN and WhereCondition.Operator.IN. E.g. selecting customers with first name “Paddy” or “Mary” can be expressed by</p>
+<pre><code>.and(COL_FIRST_NAME, IN, &quot;Paddy&quot;, &quot;Mary&quot;);</code></pre>
+<p>The variants <code>xxxNotNull(...)</code> will only add the sub-condition if the (first) field value differs from Null. This is of interest for the assembly of conditions from interactive search criteria input. An empty criterion usually means ‘do not consider’ rather than ‘must be empty’.</p>
+<p>The variant without parameters opens up a sub-condition which must be completed by function bracketClose(). The following condition looks for early customers (id less than 1000) that registered with a suspicious name “Mickey Mouse”:</p>
+<pre><code>WhereCondition byMickeyMouse = new WhereCondition()
+    .and(COL_ID, LESS, 1000)
+    .and()
+        .or(COL_FIRST_NAME, IN, &quot;Mickey&quot;, &quot;Mouse&quot;)
+        .or(COL_NAME, IN, &quot;Mickey&quot;, &quot;Mouse&quot;)
+    .bracketClose();</code></pre>
+<p>What of you are interested in other suspicious cases where name and first name are equal. In this case, the value is a field name itself and you have to bypass the value formatting. This is achieved by passing raw SQL values like that:</p>
+<pre><code>.and(COL_FIRST_NAME, SQL.raw(COL_NAME))</code></pre>
+<p>Finally the WhereCondition can be extended by ordering and grouping clauses. E.g. the following condition selects all customers ordered by name and first name:</p>
+<pre><code>new WhereCondition().orderBy(COL_NAME).orderBy(COL_FIRST_NAME)</code></pre>
+<p>Especially when you select data <em>in order</em>, the ResultIterator provides the additional methods spoolToList() and spoolToArray() to read results in chunks. This will be explained in more details in chapter <a href="#mass-operations">Mass Operations</a>.</p>
+<p>And finally finally the methods bindvars…() in the WhereCondition class give you fine-grained control over which parts of the expression should use bind variables and which ones should be plain SQL. Bind variables or not becomes a relevant issue for databases on heavy duty and therefore are also discussed in the mass operation chapter.</p>
+<h3 id="arbitrary-criteria">Arbitrary criteria</h3>
+<p>When the going gets tough there is a method <code>query(String where)</code> available in all adapters and hybrid entities. The function gets passed a fully assembled where-clause without the leading where keyword. It takes any limitations away but also a lot of convenience and safety. Assembly of complicated SQL expressions may not only become an issue in where-clauses but in any multi-record operation likes joins, merge statements, or mass updates. PriDE can help you assembling these expressions with the class pm.pride.SQLExpressionBuilder resp. the function pride.pm.SQL.build(). It preserves the native readability of complicated SQL on the one hand and allows you to work with table name and column name constants on the other hand to preserve code dependency tracking. In the preceding chapters you learned already that the PriDE principles heavily emphasize this central aspect for robust application design. The expression builder is addressed in a <a href="#sql-expression-builder">separate chapter</a>. However, to give you a first impression, here is an example how to build the most complicated expression above - the Mickey Mouse case - using the expression builder:</p>
+<pre><code>String byMickeyMouse = SQL.build(
+    &quot;@ID &lt; 1000 AND (&quot; +
+    &quot;  @FIRST_NAME IN (&#39;Mickey&#39;, &#39;Mouse&#39;) OR &quot; +
+    &quot;  @NAME IN (&#39;Mickey&#39;, &#39;Mouse&#39;)&quot; +
+    &quot;)&quot;,
+    COL_ID, COL_FIRST_NAME, COL_NAME);
+ResultIterator ri = new Customer().query(byMickeyMouse);</code></pre>
+<p>This is a very limited example but you may already recognize the advantage over using the convenient WhereCondition fluent API: The SQL code is plain to see in nearly its native structure and notation although the actual assembly still makes use of the table and column name constants. The expression string may contain ? characters for bind variables. In this case, the variable values must be appended to the expression in the query() method call. The following example uses that feature for the ID threshold of 1000, making up the same selection as above:</p>
+<pre><code>String byMickeyMouse = SQL.build(
+    &quot;@ID &lt; ? AND (&quot; +
+    &quot;  @FIRST_NAME IN (&#39;Mickey&#39;, &#39;Mouse&#39;) OR &quot; +
+    &quot;  @NAME IN (&#39;Mickey&#39;, &#39;Mouse&#39;)&quot; +
+    &quot;)&quot;,
+    COL_ID, COL_FIRST_NAME, COL_NAME);
+ResultIterator ri = new Customer().query(byMickeyMouse, 1000);</code></pre>
+<p>Using bind variables is the easiest way for you as a developer to overcome the problem of value formating, which may become a bit tricky for complex data types like dates and timestamps. However, this should of course not be the main reason to use bind variables. See chapter <a href="#mass-operations">Mass Operations</a> for purposeful usage. As long as you are working with small databases, it is OK just to utilize the formatting side effect.</p>
+<p>If you want to learn more about the expression builder right now, read the chapter <a href="#sql-expression-builder">SQL Expression Builder</a>.</p>
+<h1 id="insert-update-and-delete">Insert, Update, and Delete</h1>
+<p>The basic functionality for inserting, updating and deleting data is very simple. In addition to the basics, this chapter also explains how to manage transactions which is of course a very important issue when you manipulate the data. For most code snippets in this chapter you can find example code in the directory <a href="https://github.com/j-pride/pride.pm/tree/master/src/examples/java/modify">examples/modify</a> in the PriDE delivery and on GitHub.</p>
+<h2 id="insert">Insert</h2>
+<p>To insert a record in a database table, you create an instance of the corresponding entity class, set all its attributes and call its create() method:</p>
+<pre><code>Customer customer = new Customer();
+customer.setId(57);
+customer.setName(&quot;Fingal&quot;);
+customer.setFirstnae(&quot;Paddy&quot;);
+customer.create();</code></pre>
+<p>When you are working with separate adapters instead, create() is a method of the adapter and the code looks like that:</p>
+<pre><code>CustomerEntity customer = new CustomerEntity();
+customer.setId(57);
+customer.setName(&quot;Fingal&quot;);
+customer.setFirstnae(&quot;Paddy&quot;);
+new CustomerAdater(customer).create();</code></pre>
+<p>You can insert multiple records successively using the same entity (and adapter) by changing the entity’s data and repeatedly call create(). This is OK for small amounts of inserts. If you have to insert thousands or hundreds of thousands records, you better work with the class pm.pride.PreparedInsert as explained in chapter <a href="#mass-operations">Mass Operations</a>.</p>
+<p>If the addressed database table has auto-increment rows, you can specify these rows in the adapter class resp. the hybrid entity class by the method public <code>String[] getAutoFields()</code>. In this case you leave the appropriate attributes uninitialized, and after creation PriDE will set them according to the values generated by the database. Expressing auto-incrementation in a database table definition is always a bit vendor-specific as well as the supported generation features in general. Supposed you are still experimenting with the SQLite database from the <a href="#quick-start-tutorial">Quick Start Tutorial</a>, you could change the CUSTOMER table as follows to make the ID and auto-increment row:</p>
+<pre><code>create table CUSTOMER (
+    id integer not null primary key AUTOINCREMENT,
+    name varchar(20),
+    first_name varchar(30)
+);</code></pre>
+<p>An appropriate hybrid entity class looks exactly like the one from the Quick Start Tutorial only extended by the following line:</p>
+<pre><code>public String[] getAutoFields() { return keyFields; }</code></pre>
+<p>Based on that, the following loop creates 10 unique test customers in a row and prints out the auto-generated ID of each of them:</p>
+<pre><code>Customer customer = new Customer();
+for (int i = 0; i &lt; 10; i++) {
+    customer.setName(&quot;Fingal-&quot; + i);
+    customer.setFirstName(&quot;Paddy-&quot; + i);
+    customer.create();
+    System.out.println(customer.getId());
+}</code></pre>
+<p>You find an example for a customer class with auto-increment ID in directory <a href="https://github.com/j-pride/pride.pm/tree/master/src/examples/java/modify">examples/modify</a> in the PriDE delivery.</p>
+<h2 id="transactions">Transactions</h2>
+<p>Try to write a loop as above without anything else and you will recognize that it does not produce any rows at all in you CUSTOMER table. Most SQL databases are fully transaction-saved by default and thus require the application to properly commit its work. The foundation for transaction management with commit and rollback is the <a href="https://en.wikipedia.org/wiki/ACID_(computer_science)">ACID principle</a>, which every developer must be well aware of as it is deep-seated in JDBC and every JDBC-based persistence manager.</p>
+<p>In a JSE environment you will by default lose all your database work when the application terminates and you forgot to explicitly run a commit operation. In enterprise environments like standard JEE or Spring the application is usually not responsible for ending transactions by programmatic operations. Most applications use so-called container-managed transactions which are implicitly controlled by method annotations and exception handling. This is a very convenient and recommendable technique and it is also the key for composing higher-level methods from calls of lower-level methods in an elegant way according to the <a href="http://principles-wiki.net/principles:single_level_of_abstraction">Single Level of Abstraction Principle</a>. No method has to worry about whether it is the very top-level of the (potentially still growing) composition tree.</p>
+<p>PriDE does not really manage transactions by its own but relies on the transaction management of the environment it is used in. The link between PriDE and its environment is the ResourceAccessor interface and you have to install one somewhere in your application. The chapter <a href="#jse-jee-and-resourceaccessor">JSE, JEE, and ResourceAccessor</a> will explain that in detail. Except in this chapter, all other examples in this manual are working on a simple JSE environments and use the class ResourceAccessorJSE. So here is how this resource accessor works concerning its simple connection management and the resulting transaction behavior:</p>
+<ul>
+<li>As soon as you access the database for the first time, the accessor opens a database connection and binds it to the current thread. I.e. all succeeding database operations within the same thread are performed on the same database connection.</li>
+<li>The ResourceAccessorJSE has no connection pooling, i.e. the number of concurrently allocated database connections corresponds to the number of threads requiring access to the database. This is not a suitable model for server applications, but if you implement server components with PriDE, you will hopefully work in a JEE environment.</li>
+<li>The current database transaction can be committed by the call <code>DatabaseFactory.getDatabase().commit()</code>. This addresses only the connection being bound to the current thread. After committing, the connection is kept open and related to the thread so that subsequent databases operations run without warming up a new connection.</li>
+<li>Alternatively the commit can be initiated from any adapter resp. hybrid entity as well. This is especially of interest when working with multiple databases because the commit then refers to the database which the entity resides in whereas DatabaseFactory.getDatabase() refers to the database which was addressed at last. This will be explained in detail in chapter <a href="#multiple-databases">Multiple Databases</a>. When you are working with a single database, these operations are equivalent.</li>
+<li>Instead of committing you may rollback your work by calling the rollback() method either on the database object or an adapter resp. a hybrid entity.</li>
+<li>The resource accessor explicitly turns off auto-commit for every allocated connection.</li>
+</ul>
+<p>Coming back to the example for customer creation above, the code must be completed as follows:</p>
+<pre><code>Customer customer = new Customer();
+for (int i = 0; i &lt; 10; i++) {
+    // see above
+}
+customer.commit();</code></pre>
+<p>As a result the code will either successfully create all 10 customers or non at all because the whole work of the loop is committed at once at the end. If any of the 10 insert operations fails with an exception, the commit call would be skipped. This causes the application to terminate without any commit which in turn causes and implicit rollback. If you write an application which runs for a long time and is supposed to survive severe exceptions (i.e. a UI client), you should pay some attention on making the application robust against accidentally unterminated transactions. A recommended Java feature for an appropriate safety net is the UncaughtExceptionHandler interface. You can install a handler to every thread which preventively performs a rollback call.</p>
+<h2 id="update">Update</h2>
+<p>Updating a record is performed by calling the update() method of the adapter resp. the hybrid entity. All fields returned from the adapter’s getKeyFields() method are used to identify the record and all other fields are updated. The code</p>
+<pre><code>Customer paddy = new Customer(57);
+paddy.setFirstName(&quot;Paddy&quot;);
+paddy.update();
+paddy.commit();</code></pre>
+<p>results in the following SQL statements as you can see from the log file:</p>
+<pre><code>select id,name,first_name from CUSTOMER where ( id = 57 ) 
+update CUSTOMER set name = &#39;Fingal&#39;,first_name = &#39;Paddy&#39; where id = 57</code></pre>
+<p>All update calls return the number of affected rows which should be 0 or 1 in case of an update by primary key. It’s up to you if you check the result. PriDE has no detection which attributes actually changed since an entity has been loaded, so it simply updates <em>all</em> attributes which are not part of the primary key. As PriDE has no instance and change management, updates always have to be explicitly performed by the application. If you are familiar with JPA, you may recognize that the concepts are very different concerning this aspect. The chapter <a href="#pride-design-principles">PriDE Design Principles</a> explains why the much simpler approach of PriDE is not a loss.</p>
+<p>Updating single rows by update() calls is OK for a limited number of operations per transaction. If you have to update thousands of records instead you should consider working with the class pm.pride.PreparedUpdate as explained in chapter <a href="#mass-operations">Mass Operations</a>.</p>
+<p>There are a few variants of the update() method available which allow to update multiple records at once. E.g. the method update(WhereCondition where, String… updatefields) can address the records of interest by a where condition. In these cases there are usually only particular fields requiring an update. The following example demonstrates how to change all first names from “Paddy” to “Patrick”:</p>
+<pre><code>Customer customer = new Customer();
+customer.setFirstName(&quot;Patrick&quot;);
+int updates = customer.update(new WhereCondition(COL_FIRST_NAME, &quot;Paddy&quot;), COL_FIRST_NAME);
+customer.commit();
+System.out.println(updates + &quot; row(s) updated&quot;);</code></pre>
+<p>The code above makes clear that multi-record updates are not necessarily best to understand when they are expressed by entity operations. Have a look on the resulting update statement which is pretty clear to understand:</p>
+<pre><code>update CUSTOMER set first_name = &#39;Patrick&#39; where ( first_name = &#39;Paddy&#39; )</code></pre>
+<p>If the entity layer is not appropriate, you have a lower level at hand using the class pm.pride.Database. You get access to the current database by the call <code>DatabaseFactory.getDatebase()</code>. Here is how the renaming update looks like with a combination of the Database class and the SQLExpressionBuilder:</p>
+<pre><code>Database database = DatabaseFactory.getDatabase();
+String operation = SQL.build(
+    &quot;update @CUSTOMER set @FIRST_NAME = &#39;Patrick&#39; where ( @FIRST_NAME = &#39;Paddy&#39; ) &quot;,
+    TABLE, COL_FIRST_NAME);
+int updates = database.sqlUpdate(operation);
+database.commit();
+System.out.println(updates + &quot; row(s) updated&quot;);</code></pre>
+<p>In this example, the SQL code is almost present in its native, well recognizable form but it is still based on the entity’s table and column name constants. The DRY principle and dependency tracking is kept up properly. The commit is performed on the Database instance as explained in section <a href="#transactions">Transactions</a> above.</p>
+<h2 id="delete">Delete</h2>
+<p>To delete a record you have to call the delete() method of the adapter resp. the hybrid entity. All fields returned from the adapter’s getKeyFields() method are used to identify the record All other fields are ignored, so whether they are initialized or not is irrelevant. The following code deletes the customer with ID 57:</p>
+<pre><code>Customer c57 = new Customer();
+c57.setId(57);
+paddy.delete();
+paddy.commit();</code></pre>
+<p>Note that the code above is based on a hybrid entity and does not use the re-constructor which would immediately initiate a find operation. Entities don’t have to be loaded before deletion. Just like updates, every deletion returns the number of affected rows and it’s up to you if you check the result.</p>
+<p>There is a deleteByExample() method available which allows to specify a different set of key attributes and usually deletes multiple records at once. More complicated multi-record deletions can be performed by the sqlUpdate() method of the Database class as introduced before in the <a href="#update">section about updates</a>.</p>
 				</div>
 			</section>
 
