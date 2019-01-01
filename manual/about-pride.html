@@ -32,9 +32,9 @@
 </nav>
 <p>PriDE ist the Java world’s smallest object-relational mapper for SQL databases. O/R mapping is the wide-spread approach to map records of a relation SQL database to objects of an object-oriented application. The application should operate on its persistent entities as object-oriented as possible, not regarding that some of them come from a database or must be saved in one. PriDE provides functionality to</p>
 <ul>
-<li>Describe the mapping of database tables to Java classes</li>
-<li>Read and write data records without accessing the complicated JDBC interface, and - as far as possible - don’t write any SQL at all</li>
-<li>Simplify the assembly of complicated SQL expressions and selection conditions</li>
+<li><p>Describe the mapping of database tables to Java classes</p></li>
+<li><p>Read and write data records without accessing the complicated JDBC interface, and - as far as possible - don’t write any SQL at all</p></li>
+<li><p>Simplify the assembly of complicated SQL expressions and selection conditions</p></li>
 </ul>
 <p>While O/R mapping is usually based on single-object operations, PriDE also supports efficient database mass processing within Java. The goal is to avoid shifting application logic into procedures within the database as far as possible and not to break the DRY principle. However, if stored procedures and functions are required sometimes, PriDE provides a convenient way to call them.</p>
 <p>PriDE was designed for usage in JSE and JEE environments and is used identically everywhere except some initialization operations and the transaction management. The framework follows a very pragmatic approach to provide basic development support quickly and easily. It does not claim to conform with established persistence management standards but follows common design patterns and proved to be suitable in mission-critical projects over many years. The <a href="feature-list.html">detailed feature list</a> may help to figure out whether PriDE meets the requirements of individual development projects, and allows to roughly compare this toolkit with existing well-known O/R mapping products and standards like JPA, JOOQ or MyBatis.</p>
@@ -46,13 +46,13 @@
 <p>This manual gives you a complete overview about PriDE’s standard functionality, design patterns and design principles. It is not mandatory to work through all the details unless you want to become an expert. However, it is strongly recommended to begin with the <a href="quick-start-tutorial.html">quick start tutorial</a> as many code fragments in other chapters come back to the quick start example. The chapters <a href="find-and-query.html">Find and Query</a> and <a href="insert-update-and-delete.html">Insert, Update, and Delete</a> describe the core functionality you should become familiar with. All other chapters describe special aspects which you can dive into, when the time has come.</p>
 <p>Many code fragments in this manual refer to existing example code which is either included in every PriDE delivery or can be <a href="https://github.com/j-pride/pride.pm/tree/master/examples">downloaded from GitHub</a>.</p>
 <p>At January 2019, the PriDE 3 manual is work in progress. Beside the core chapters above there are chapters coming soon for the following aspects</p>
-<h4 id="entity-derivation">Entity Derivation</h4>
 <h4 id="joins">Joins</h4>
 <h4 id="optimistic-locking">Optimistic Locking</h4>
 <h4 id="jse-jee-and-resourceaccessor">JSE, JEE, and ResourceAccessor</h4>
 <h4 id="multiple-databases">Multiple Databases</h4>
 <h4 id="mass-operations">Mass Operations</h4>
 <h4 id="sql-expression-builder">SQL Expression Builder</h4>
+<h4 id="calling-stored-procedures">Calling Stored Procedures</h4>
 <h4 id="pride-design-principles">PriDE Design Principles</h4>
 <p>A good information source for features which are not yet covered by this manual are PriDE’s unit tests which you can find on <a href="https://github.com/j-pride/pride.pm/tree/master/src/test/java/basic">GitHub</a>. You may also consult the manual from PriDE version 2 which is available on <a href="http://pride.sourceforge.net/PriDE.html">SourceForge</a>.</p>
 <div class="subpage-navigation">
