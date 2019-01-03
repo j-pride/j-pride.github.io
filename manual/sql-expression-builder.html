@@ -58,10 +58,10 @@
 &quot;    ( length(%4$s) &lt; 2 and length(%5$s) &lt; 2 ) or&quot; +
 &quot;    ( %4$s = %5$s )&quot; +
 &quot;)&quot;,
-COL_ID, lowest, highest, COL_NAME, COL_FIRSTNAME);</code></pre>
+COL_ID, lowest, highest, COL_NAME, COL_FIRST_NAME);</code></pre>
 <h2 id="elaborated-sql-with-sqlexpressionbuilder">Elaborated SQL with SQLExpressionBuilder</h2>
 <p>PriDE’s expression builder extends String.format() in a way, the you can use identifiers rather than just % and position numbers as variables. The builder is address by the static function <code>build(String formatString, Object... args)</code> in class pm.pride.SQL. Identifiers in the format string that require replacement by any of the following arguments begin with an @ character and end with the first character that is neither a letter nor an underscore. Based on that, the SQL can be represented almost natively:</p>
-<pre><code>String.format(
+<pre><code>SQL.build(
 &quot;@id between %d and %d and (&quot; +
 &quot;    ( length(@name) + length(@first_name) &lt; 7) or&quot; +
 &quot;    ( length(@name) &lt; 2 and length(@first_name) &lt; 2 ) or&quot; +
@@ -70,23 +70,23 @@ COL_ID, lowest, highest, COL_NAME, COL_FIRSTNAME);</code></pre>
 COL_ID, lowest, highest, COL_NAME, COL_FIRSTNAME);</code></pre>
 <p>As you can see, the identifier feature can be combined with Java’s standard replacement feature. arguments are assigned to identifiers in order of occurrence in the format string. Repeated occurrences of an identifier are replaced by the argument which was assigned to the identifier on its first occurrence.</p>
 <p>If you need lots of arguments, it is helpful to split the argument list in multiple lines like the format string. Each argument line contains only the arguments which are (first) assigned to the identifiers of the corresponding line from the format string. Applied to the example above it looks like that:</p>
-<pre><code>String.format(
+<pre><code>SQL.build(
 &quot;@id between %d and %d and (&quot; +
 &quot;    ( length(@name) + length(@first_name) &lt; 7) or&quot; +
 &quot;    ( length(@name) &lt; 2 and length(@first_name) &lt; 2 ) or&quot; +
 &quot;    ( @name = @first_name )&quot; +
 &quot;)&quot;,
 COL_ID, lowest, highest,
-COL_NAME, COL_FIRSTNAME);</code></pre>
+COL_NAME, COL_FIRST_NAME);</code></pre>
 <p>A small expression like above doesn’t need those tricks, but e.g. a complex SQL merge statement may require 20 arguments and more. Alternatively you may also combine identifiers with position numbers as known from String.format(), so that you can check the identifier/argument matching by counting:</p>
-<pre><code>String.format(
+<pre><code>SQL.build(
 &quot;@1$id between %2$d and %3$d and (&quot; +
 &quot;    ( length(@4$name) + length(@5$first_name) &lt; 7) or&quot; +
 &quot;    ( length(@name) &lt; 2 and length(@first_name) &lt; 2 ) or&quot; +
 &quot;    ( @name = @first_name )&quot; +
 &quot;)&quot;,
 COL_ID, lowest, highest,
-COL_NAME, COL_FIRSTNAME);</code></pre>
+COL_NAME, COL_FIRST_NAME);</code></pre>
 <p>Only one occurrence of an identifier needs to be accompanied by a position specification, while all the others automatically inherit the argument assignment. You may add the position number to all occurrences but then they have to be identical. Re-positioning is not allowed.</p>
 <h2 id="building-and-formatting">Building and Formatting</h2>
 <p>All identifiers are replaced by the string representation of its assigned argument. The expression builder is <em>not</em> concerned with SQL value formatting. If you do not only pass column, table, and alias names as arguments but also <em>values</em>, you must ensure proper SQL formatting. There are different approaches to achieve that.</p>
