@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>PriDE 3 User Manual</title>
+  <title>Joins</title>
   <style type="text/css">
       code{white-space: pre-wrap;}
       span.smallcaps{font-variant: small-caps;}
@@ -23,9 +23,27 @@
 		<section id="three" class="wrapper">
 			<div class="inner">
 <header id="title-block-header">
-<h1 class="title">PriDE 3 User Manual</h1>
+<h1 class="title">Joins</h1>
 </header>
-<p><a href="about-pride.html">About PriDE</a><p> <a href="quick-start-tutorial.html">Quick Start Tutorial</a><p> <a href="entity-adapter-and-descriptor.html">Entity, Adapter, and Descriptor</a><p> <a href="find-and-query.html">Find and Query</a><p> <a href="insert-update-and-delete.html">Insert, Update, and Delete</a><p> <a href="entity-inheritance.html">Entity Inheritance</a><p> <a href="joins.html">Joins</a></p>
+<p>PriDE provides different techniques to express joins, depending on the purpose resp. the type of outcome of the join:</p>
+<ul>
+<li>An entity being a 1:1 mapping of a table because the join is only required for complicated selection conditions that take related tables into account.</li>
+<li>An extended entity consisting of a 1:1 mapping of a table, extended by a few attributes from a related table</li>
+<li>An entity composition, i.e. an entity for a 1:1 mapping of a table, extended by references to related entities that also represent 1:1 table mappings</li>
+<li>A composition from table fragments and/or computations, making up a new type of entity with its own specific meaning.</li>
+</ul>
+<p>The different variants are explained with the CUSTOMER table being used in all other examples so far, and an additional table ADDRESS like this:</p>
+<pre><code>create table ADDRESS (
+    customer_id integer not null,
+    street varchar(30),
+    city varchar(30)
+);</code></pre>
+Each customer optionally has an address attached. You find a corresponding entity and a table creation class in the directory examples/joins.
+<div class="subpage-navigation">
+<p>
+<a id="prev" href="entity-inheritance.html"> Prev.</a>
+</p>
+</div>
 				</div>
 			</section>
 
