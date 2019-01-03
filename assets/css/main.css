@@ -1590,7 +1590,7 @@
 
 	body {
 		background-color: #fff;
-		color: #444;
+		color: #111;
 	}
 
 	body, input, select, textarea {
@@ -1787,7 +1787,7 @@
 	}
 
 	a {
-		color: #61adcf;
+		color: #4c86a0;
 	}
 
 	strong, b {
