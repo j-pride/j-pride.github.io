@@ -33,7 +33,7 @@
 </ul></li>
 <li><a href="#selection-criteria">Selection criteria</a><ul>
 <li><a href="#wherecondition">WhereCondition</a></li>
-<li><a href="#arbitrary-criteria">Arbitrary criteria</a></li>
+<li><a href="#arbitrary-criteria">Arbitrary Criteria</a></li>
 </ul></li>
 </ul>
 </nav>
@@ -147,7 +147,7 @@ ResultIterator ri = new Customer().query(byFirstNameAndEmptyName);</code></pre>
 <pre><code>new WhereCondition().orderBy(COL_NAME).orderBy(COL_FIRST_NAME)</code></pre>
 <p>Especially when you select data <em>in order</em>, the ResultIterator provides the additional methods spoolToList() and spoolToArray() to read results in chunks. This will be explained in more details in chapter <a href="mass-operations.html">Mass Operations</a>.</p>
 <p>And finally finally the methods bindvars…() in the WhereCondition class give you fine-grained control over which parts of the expression should use bind variables and which ones should be plain SQL. Bind variables or not becomes a relevant issue for databases on heavy duty and therefore are also discussed in the mass operation chapter.</p>
-<h3 id="arbitrary-criteria">Arbitrary criteria</h3>
+<h3 id="arbitrary-criteria">Arbitrary Criteria</h3>
 <p>When the going gets tough there is a method <code>query(String where)</code> available in all adapters and hybrid entities. The function gets passed a fully assembled where-clause without the leading where keyword. It takes any limitations away but also a lot of convenience and safety. Assembly of complicated SQL expressions may not only become an issue in where-clauses but in any multi-record operation likes joins, merge statements, or mass updates. PriDE can help you assembling these expressions with the class pm.pride.SQLExpressionBuilder resp. the function pride.pm.SQL.build(). It preserves the native readability of complicated SQL on the one hand and allows you to work with table name and column name constants on the other hand to preserve code dependency tracking. In the preceding chapters you learned already that the PriDE principles heavily emphasize this central aspect for robust application design. The expression builder is addressed in a <a href="sql-expression-builder.html">separate chapter</a>. However, to give you a first impression, here is an example how to build the most complicated expression above - the Mickey Mouse case - using the expression builder:</p>
 <pre><code>String byMickeyMouse = SQL.build(
     &quot;@ID &lt; 1000 AND (&quot; +
