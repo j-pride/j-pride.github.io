@@ -18,7 +18,7 @@
 </head>
 <body>
 		<div class="subpage-menu">
-			<a href="index.html"><i class="fa fa-home"></i> Home</a>
+			<a href="http://pride.pm"><i class="fa fa-home"></i> Home</a>
 		</div>
 		<section id="three" class="wrapper">
 			<div class="inner">
@@ -35,7 +35,7 @@
 <li><a href="#before-you-go-ahead">Before you go ahead…</a></li>
 </ul>
 </nav>
-<p>This short tutorial gives an introduction into the general working principles of PriDE, based on a simple example. It takes less than half an hour to set up a simple PriDE application which allows to perform basic operations on a single database table. The directory <a href="https://github.com/j-pride/pride.pm/tree/master/src/examples/java/quickstart">examples/quickstart</a> of the PriDE delivery contains the complete source code for the tutorial example.</p>
+<p>This short tutorial gives an introduction into the general working principles of PriDE, based on a simple example. It takes less than half an hour to set up a simple PriDE application which allows to perform basic operations on a single database table. The package <a href="https://github.com/j-pride/manual-example-code/tree/master/src/main/java/quickstart">quickstart</a> of the <a href="https://github.com/j-pride/manual-example-code/">PriDE manual example code repository on GitHub</a> contains the complete source code for the tutorial example.</p>
 <p>Setting up an application includes the following steps:</p>
 <ul>
 <li>Preparing the development project</li>
@@ -46,7 +46,8 @@
 </ul>
 <p>I.e. there’s only a few minutes time for each step now, so let’s hurry up ;-)</p>
 <h2 id="preparing-the-development-project">Preparing the development project</h2>
-<p>Working with PriDE requires to add the library pride.jar into the CLASSPATH of the working environment, as well as the JDBC driver of the database to access. E.g. in case of a MySQL 6 database this is the library mysql-connector-java-6.0.6.jar, for Oracle 11 the library ojdbc8.jar, for HSQL 2.x the library hsqldb-2.x.y.jar, and for SQLite 3 the library sqlite-jdbc-3.x.y.jar. The ultra light database SQLite is the best choice for first experiments. Driver class, database URL, database user, and password are supposed to be provided as system properties in this tutorial examples. For SQLite and a local example database, user and password can be omitted and the properties look like this:</p>
+<p>Working with PriDE requires to add the library pride-x-y-z.jar into the CLASSPATH of the working environment, as well as the JDBC driver of the database to access. E.g. in case of a MySQL 6 database this is the library mysql-connector-java-6.y.z.jar, for Oracle 11 the library ojdbc8.jar, for HSQL 2.x the library hsqldb-2.y.z.jar, and for SQLite 3 the library sqlite-jdbc-3.y.z.jar. The ultra light database SQLite in server-less mode is the best choice for first experiments. You may set up a playground project by cloning PriDE’s <a href="https://github.com/j-pride/manual-example-code">manual examples source code repository on GitHub</a> and compile its sources with Maven, using the included <a href="https://github.com/j-pride/manual-example-code/blob/master/pom.xml">pom.xml</a>. However, as PriDE and SQLite do not depend on any other libraries, you can easily download the PriDE and SQLite JAR files from Maven central and create a project with any technique you like.</p>
+<p>Driver class, database URL, database user, and password are supposed to be provided as system properties in this tutorial examples. For SQLite and a local example database, user and password can be omitted and the properties look like this:</p>
 <pre><code>pride.dbtype=sqlite
 pride.driver=org.sqlite.JDBC
 pride.db=jdbc:sqlite:pride.examples.db
@@ -59,7 +60,7 @@ pride.logfile=sql.log</code></pre>
     name varchar(20),
     first_name varchar(30)
 );</code></pre>
-<p>Add this table now to your SQLite database, using SQLite’s command shell or by running the following Java class being included in the PriDE example code:</p>
+<p>Add this table now to your SQLite database, using SQLite’s command shell or by running class <a href="https://github.com/j-pride/manual-example-code/blob/master/src/main/java/quickstart/CreateCustomerTable.java">CreateCustomerTable</a> included in the PriDE manual example code:</p>
 <pre><code>java
 -Dpride.dbtype=sqlite
 -Dpride.driver=org.sqlite.JDBC
@@ -74,7 +75,7 @@ util.CreateCustomerTable</code></pre>
 -Dpride.db=jdbc:sqlite:pride.examples.db
 -Dpride.logfile=sql.log
 pm.pride.util.generator.EntityGenerator CUSTOMER quickstart.Customer &gt; Customer.java</code></pre>
-<p>The generator writes its output to the console, so you can either redirect the output to file as you see above or create the class in the IDE of your choice and copy the output from the console to your class editor. Note that you may also generate the descriptive parts in a <em>separate</em> class to keep the entity bean class free from database aspects. For the tutorial example under <a href="https://github.com/j-pride/pride.pm/tree/master/src/examples/java/quickstart">examples/quickstart</a> we generate a hybrid class which looks like this:</p>
+<p>The generator writes its output to the console, so you can either redirect the output to file as you see above or create the class in the IDE of your choice and copy the output from the console to your class editor. Note that you may also generate the descriptive parts in a <em>separate</em> class to keep the entity bean class free from database aspects. For the tutorial example we generate a hybrid class which looks like this:</p>
 <pre><code>public class Customer extends MappedObject {
     public static final String TABLE = &quot;CUSTOMER&quot;;
     public static final String COL_ID = &quot;id&quot;;
@@ -148,7 +149,7 @@ public void queryByName( String name )
     }
 }</code></pre>
 <h2 id="running-the-application">Running the application</h2>
-<p>The tutorial example under examples/quickstart includes the file CustomerClient.java, providing an interactive test client. Calling the client with its system property based initialization looks like this:</p>
+<p>The tutorial example on <a href="https://github.com/j-pride/manual-example-code/tree/master/src/main/java/quickstart">GitHub</a> includes the class <a href="https://github.com/j-pride/manual-example-code/tree/master/src/main/java/quickstart/CustomerClient.java">CustomerClient</a>, providing an interactive test client. Calling the client with its system property based initialization looks like this:</p>
 <pre><code>java
 -Dpride.dbtype=sqlite
 -Dpride.driver=org.sqlite.JDBC
@@ -161,7 +162,7 @@ quickstart.CustomerClient</code></pre>
 <h4 id="thats-it">That’s it!</h4>
 <p>The tutorial example already introduces the most important basic elements of PriDE. To understand what’s going on behind the scenes of the 5 steps above, you will find all aspects explained in detail in the manual.</p>
 <h2 id="before-you-go-ahead">Before you go ahead…</h2>
-<p>Before you go on you should simplify the configuration in a way that you don’t have to provide system properties every time you call a client. Although PriDE does not <em>require</em> any descriptive languages, they are sometimes quite helpful. To simplify the playing-around with examples, all client programs included in the PriDE examples use the class util.ResourceAccessorExampleConfig for initialization. It allows to assemble the configuration from two sources: system properties as it was introduced so far and a property file config/pride.examples.config.properties. As the configuration properties probably stay unchanged through all your experiments, you should transfer all your command line system properties to file (without the leading “-D” of course) and start your client programs without passing any system properties at all. To run the entity generator with the file-based configuration call the wrapper class util.EntityGeneratorWithExampleConfig which is also included in the examples.</p>
+<p>Before you go on you should simplify the configuration in a way that you don’t have to provide system properties every time you call a client. Although PriDE does not <em>require</em> any descriptive languages, they are sometimes quite helpful. To simplify the playing-around with examples, all client programs included in the PriDE manual examples use the class <a href="https://github.com/j-pride/manual-example-code/blob/master/src/main/java/util/ResourceAccessorExampleConfig.java">util.ResourceAccessorExampleConfig</a> for initialization. It allows to assemble the configuration from two sources: system properties as it was introduced so far and a property file <a href="https://github.com/j-pride/manual-example-code/blob/master/config/pride.examples.config.properties">config/pride.examples.config.properties</a>. As the configuration properties probably stay unchanged through all your experiments, you should transfer all your command line system properties to file (without the leading “-D” of course) and start your client programs without passing any system properties at all. To run the entity generator with the file-based configuration call the wrapper class <a href="https://github.com/j-pride/manual-example-code/blob/master/src/main/java/util/EntityGeneratorWithExampleConfig.java">util.EntityGeneratorWithExampleConfig</a> which is also included in the examples.</p>
 <div class="subpage-navigation">
 <p>
 <a id="prev" href="about-pride.html"> Prev.</a> | <a id="next" href="entity-adapter-and-descriptor.html">Next </a>

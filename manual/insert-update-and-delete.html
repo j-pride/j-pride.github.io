@@ -18,7 +18,7 @@
 </head>
 <body>
 		<div class="subpage-menu">
-			<a href="index.html"><i class="fa fa-home"></i> Home</a>
+			<a href="http://pride.pm"><i class="fa fa-home"></i> Home</a>
 		</div>
 		<section id="three" class="wrapper">
 			<div class="inner">
@@ -33,7 +33,7 @@
 <li><a href="#delete">Delete</a></li>
 </ul>
 </nav>
-<p>The basic functionality for inserting, updating and deleting data is very simple. In addition to the basics, this chapter also explains how to manage transactions which is of course a very important issue when you manipulate the data. For most code snippets in this chapter you can find example code in the directory <a href="https://github.com/j-pride/pride.pm/tree/master/src/examples/java/modify">examples/modify</a> in the PriDE delivery and on GitHub.</p>
+<p>The basic functionality for inserting, updating and deleting data is very simple. In addition to the basics, this chapter also explains how to manage transactions which is of course a very important issue when you manipulate the data. For most code snippets in this chapter you can find example code in package <a href="https://github.com/j-pride/manual-example-code/tree/master/src/main/java/modify">modify</a> in the <a href="https://github.com/j-pride/manual-example-code/">PriDE manual source code repository on GitHub</a>.</p>
 <h2 id="insert">Insert</h2>
 <p>To insert a record in a database table, you create an instance of the corresponding entity class, set all its attributes and call its create() method:</p>
 <pre><code>Customer customer = new Customer();
@@ -64,7 +64,7 @@ for (int i = 0; i &lt; 10; i++) {
     customer.create();
     System.out.println(customer.getId());
 }</code></pre>
-<p>You find an example for a customer class with auto-increment ID in directory <a href="https://github.com/j-pride/pride.pm/tree/master/src/examples/java/modify">examples/modify</a> in the PriDE delivery.</p>
+<p>You find an example for a <a href="https://github.com/j-pride/manual-example-code/blob/master/src/main/java/modify/AutoIncCustomer.java">customer class with auto-increment ID</a> in package <a href="https://github.com/j-pride/manual-example-code/tree/master/src/main/java/modify">modify</a> in the PriDE manual source code repository on GitHub.</p>
 <h2 id="transactions">Transactions</h2>
 <p>Try to write a loop as above without anything else and you will recognize that it does not produce any rows at all in you CUSTOMER table. Most SQL databases are fully transaction-saved by default and thus require the application to properly commit its work. The foundation for transaction management with commit and rollback is the <a href="https://en.wikipedia.org/wiki/ACID_(computer_science)">ACID principle</a>, which every developer must be well aware of as it is deep-seated in JDBC and every JDBC-based persistence manager.</p>
 <p>In a JSE environment you will by default lose all your database work when the application terminates and you forgot to explicitly run a commit operation. In enterprise environments like standard JEE or Spring the application is usually not responsible for ending transactions by programmatic operations. Most applications use so-called container-managed transactions which are implicitly controlled by method annotations and exception handling. This is a very convenient and recommendable technique and it is also the key for composing higher-level methods from calls of lower-level methods in an elegant way according to the <a href="http://principles-wiki.net/principles:single_level_of_abstraction">Single Level of Abstraction Principle</a>. No method has to worry about whether it is the very top-level of the (potentially still growing) composition tree.</p>

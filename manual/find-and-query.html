@@ -18,7 +18,7 @@
 </head>
 <body>
 		<div class="subpage-menu">
-			<a href="index.html"><i class="fa fa-home"></i> Home</a>
+			<a href="http://pride.pm"><i class="fa fa-home"></i> Home</a>
 		</div>
 		<section id="three" class="wrapper">
 			<div class="inner">
@@ -99,7 +99,7 @@ Customer[] allCustomers = ri.toArray(Customer.class);</code></pre>
 <p>The method <code>streamUncloned(Class)</code> provides all results in the original entity just as it is the case in direct iterating and processing demonstrated above. This kind of stream is suitable for any amount of results but can only be used for a limited set of stream operations. Especially operations that rely on object identity will usually not work. Operations for direct processing like forEach() or count() won’t cause any problems. The direct processing example from the beginning of the query section would look like this when using streams:</p>
 <pre><code>Customer customer = new Customer();
 customer.queryAll().streamUncloned().forEach(c -&gt; System.out.println(c));</code></pre>
-<p>Examples for find and query code can by found in the class QueryClient in the directory <a href="https://github.com/j-pride/pride.pm/tree/master/src/examples/java/query">examples/query</a> of the PriDE delivery.</p>
+<p>Examples for find and query code can by found in the class <a href="https://github.com/j-pride/manual-example-code/tree/master/src/main/java/query/QueryClient.java">QueryClient</a> in the package <a href="https://github.com/j-pride/manual-example-code/tree/master/src/main/java/query">query</a> of the PriDE manual source code repository on GitHub.</p>
 <h2 id="selection-criteria">Selection criteria</h2>
 <p>PriDE has a few different features to assemble SQL where-clauses for queries:</p>
 <ul>

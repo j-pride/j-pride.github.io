@@ -18,7 +18,7 @@
 </head>
 <body>
 		<div class="subpage-menu">
-			<a href="index.html"><i class="fa fa-home"></i> Home</a>
+			<a href="http://pride.pm"><i class="fa fa-home"></i> Home</a>
 		</div>
 		<section id="three" class="wrapper">
 			<div class="inner">
@@ -83,7 +83,11 @@
 <p>The chapter <a href="#pride-design-principles">PriDE design principles</a> gives an overview about the concepts which the framework is based on. However, before diving into more theory, it is recommended to walk through the <a href="#quick-start-tutorial">quick start tutorial</a> and get into touch with the real world.</p>
 <h2 id="about-this-manual">About this manual</h2>
 <p>This manual gives you a complete overview about PriDE’s standard functionality, design patterns and design principles. It is not mandatory to work through all the details unless you want to become an expert. However, it is strongly recommended to begin with the <a href="#quick-start-tutorial">quick start tutorial</a> as many code fragments in other chapters come back to the quick start example. The chapters <a href="#find-and-query">Find and Query</a> and <a href="#insert-update-and-delete">Insert, Update, and Delete</a> describe the core functionality you should become familiar with. All other chapters describe special aspects which you can dive into, when the time has come.</p>
-<p>Many code fragments in this manual refer to existing example code which is either included in every PriDE delivery or can be <a href="https://github.com/j-pride/pride.pm/tree/master/examples">downloaded from GitHub</a>.</p>
+<p>Many code fragments in this manual refer to existing example code which is available in an <a href="https://github.com/j-pride/manual-example-code">appropriate repository on GitHub</a>. The repository includes a <a href="https://github.com/j-pride/manual-example-code/blob/master/pom.xml">pom.xml</a> file to run all examples on a local SQLite database. To have all source code at your fingertips at any time it is recommended to</p>
+<ul>
+<li>clone the repository (<code>git clone https://github.com/j-pride/manual-example-code.git</code>) and</li>
+<li>build the project using Maven (<code>mvn clean compile</code>)</li>
+</ul>
 <p>At January 2019, the PriDE 3 manual is work in progress. Beside the core chapters above there are chapters coming soon for the following aspects</p>
 <h4 id="joins">Joins</h4>
 <h4 id="optimistic-locking">Optimistic Locking</h4>
@@ -94,7 +98,7 @@
 <h4 id="pride-design-principles">PriDE Design Principles</h4>
 <p>A good information source for features which are not yet covered by this manual are PriDE’s unit tests which you can find on <a href="https://github.com/j-pride/pride.pm/tree/master/src/test/java/basic">GitHub</a>. You may also consult the manual from PriDE version 2 which is available on <a href="http://pride.sourceforge.net/PriDE.html">SourceForge</a>.</p>
 <h1 id="quick-start-tutorial">Quick Start Tutorial</h1>
-<p>This short tutorial gives an introduction into the general working principles of PriDE, based on a simple example. It takes less than half an hour to set up a simple PriDE application which allows to perform basic operations on a single database table. The directory <a href="https://github.com/j-pride/pride.pm/tree/master/src/examples/java/quickstart">examples/quickstart</a> of the PriDE delivery contains the complete source code for the tutorial example.</p>
+<p>This short tutorial gives an introduction into the general working principles of PriDE, based on a simple example. It takes less than half an hour to set up a simple PriDE application which allows to perform basic operations on a single database table. The package <a href="https://github.com/j-pride/manual-example-code/tree/master/src/main/java/quickstart">quickstart</a> of the <a href="https://github.com/j-pride/manual-example-code/">PriDE manual example code repository on GitHub</a> contains the complete source code for the tutorial example.</p>
 <p>Setting up an application includes the following steps:</p>
 <ul>
 <li>Preparing the development project</li>
@@ -105,7 +109,8 @@
 </ul>
 <p>I.e. there’s only a few minutes time for each step now, so let’s hurry up ;-)</p>
 <h2 id="preparing-the-development-project">Preparing the development project</h2>
-<p>Working with PriDE requires to add the library pride.jar into the CLASSPATH of the working environment, as well as the JDBC driver of the database to access. E.g. in case of a MySQL 6 database this is the library mysql-connector-java-6.0.6.jar, for Oracle 11 the library ojdbc8.jar, for HSQL 2.x the library hsqldb-2.x.y.jar, and for SQLite 3 the library sqlite-jdbc-3.x.y.jar. The ultra light database SQLite is the best choice for first experiments. Driver class, database URL, database user, and password are supposed to be provided as system properties in this tutorial examples. For SQLite and a local example database, user and password can be omitted and the properties look like this:</p>
+<p>Working with PriDE requires to add the library pride-x-y-z.jar into the CLASSPATH of the working environment, as well as the JDBC driver of the database to access. E.g. in case of a MySQL 6 database this is the library mysql-connector-java-6.y.z.jar, for Oracle 11 the library ojdbc8.jar, for HSQL 2.x the library hsqldb-2.y.z.jar, and for SQLite 3 the library sqlite-jdbc-3.y.z.jar. The ultra light database SQLite in server-less mode is the best choice for first experiments. You may set up a playground project by cloning PriDE’s <a href="https://github.com/j-pride/manual-example-code">manual examples source code repository on GitHub</a> and compile its sources with Maven, using the included <a href="https://github.com/j-pride/manual-example-code/blob/master/pom.xml">pom.xml</a>. However, as PriDE and SQLite do not depend on any other libraries, you can easily download the PriDE and SQLite JAR files from Maven central and create a project with any technique you like.</p>
+<p>Driver class, database URL, database user, and password are supposed to be provided as system properties in this tutorial examples. For SQLite and a local example database, user and password can be omitted and the properties look like this:</p>
 <pre><code>pride.dbtype=sqlite
 pride.driver=org.sqlite.JDBC
 pride.db=jdbc:sqlite:pride.examples.db
@@ -118,7 +123,7 @@ pride.logfile=sql.log</code></pre>
     name varchar(20),
     first_name varchar(30)
 );</code></pre>
-<p>Add this table now to your SQLite database, using SQLite’s command shell or by running the following Java class being included in the PriDE example code:</p>
+<p>Add this table now to your SQLite database, using SQLite’s command shell or by running class <a href="https://github.com/j-pride/manual-example-code/blob/master/src/main/java/quickstart/CreateCustomerTable.java">CreateCustomerTable</a> included in the PriDE manual example code:</p>
 <pre><code>java
 -Dpride.dbtype=sqlite
 -Dpride.driver=org.sqlite.JDBC
@@ -133,7 +138,7 @@ util.CreateCustomerTable</code></pre>
 -Dpride.db=jdbc:sqlite:pride.examples.db
 -Dpride.logfile=sql.log
 pm.pride.util.generator.EntityGenerator CUSTOMER quickstart.Customer &gt; Customer.java</code></pre>
-<p>The generator writes its output to the console, so you can either redirect the output to file as you see above or create the class in the IDE of your choice and copy the output from the console to your class editor. Note that you may also generate the descriptive parts in a <em>separate</em> class to keep the entity bean class free from database aspects. For the tutorial example under <a href="https://github.com/j-pride/pride.pm/tree/master/src/examples/java/quickstart">examples/quickstart</a> we generate a hybrid class which looks like this:</p>
+<p>The generator writes its output to the console, so you can either redirect the output to file as you see above or create the class in the IDE of your choice and copy the output from the console to your class editor. Note that you may also generate the descriptive parts in a <em>separate</em> class to keep the entity bean class free from database aspects. For the tutorial example we generate a hybrid class which looks like this:</p>
 <pre><code>public class Customer extends MappedObject {
     public static final String TABLE = &quot;CUSTOMER&quot;;
     public static final String COL_ID = &quot;id&quot;;
@@ -207,7 +212,7 @@ public void queryByName( String name )
     }
 }</code></pre>
 <h2 id="running-the-application">Running the application</h2>
-<p>The tutorial example under examples/quickstart includes the file CustomerClient.java, providing an interactive test client. Calling the client with its system property based initialization looks like this:</p>
+<p>The tutorial example on <a href="https://github.com/j-pride/manual-example-code/tree/master/src/main/java/quickstart">GitHub</a> includes the class <a href="https://github.com/j-pride/manual-example-code/tree/master/src/main/java/quickstart/CustomerClient.java">CustomerClient</a>, providing an interactive test client. Calling the client with its system property based initialization looks like this:</p>
 <pre><code>java
 -Dpride.dbtype=sqlite
 -Dpride.driver=org.sqlite.JDBC
@@ -220,7 +225,7 @@ quickstart.CustomerClient</code></pre>
 <h4 id="thats-it">That’s it!</h4>
 <p>The tutorial example already introduces the most important basic elements of PriDE. To understand what’s going on behind the scenes of the 5 steps above, you will find all aspects explained in detail in the manual.</p>
 <h2 id="before-you-go-ahead">Before you go ahead…</h2>
-<p>Before you go on you should simplify the configuration in a way that you don’t have to provide system properties every time you call a client. Although PriDE does not <em>require</em> any descriptive languages, they are sometimes quite helpful. To simplify the playing-around with examples, all client programs included in the PriDE examples use the class util.ResourceAccessorExampleConfig for initialization. It allows to assemble the configuration from two sources: system properties as it was introduced so far and a property file config/pride.examples.config.properties. As the configuration properties probably stay unchanged through all your experiments, you should transfer all your command line system properties to file (without the leading “-D” of course) and start your client programs without passing any system properties at all. To run the entity generator with the file-based configuration call the wrapper class util.EntityGeneratorWithExampleConfig which is also included in the examples.</p>
+<p>Before you go on you should simplify the configuration in a way that you don’t have to provide system properties every time you call a client. Although PriDE does not <em>require</em> any descriptive languages, they are sometimes quite helpful. To simplify the playing-around with examples, all client programs included in the PriDE manual examples use the class <a href="https://github.com/j-pride/manual-example-code/blob/master/src/main/java/util/ResourceAccessorExampleConfig.java">util.ResourceAccessorExampleConfig</a> for initialization. It allows to assemble the configuration from two sources: system properties as it was introduced so far and a property file <a href="https://github.com/j-pride/manual-example-code/blob/master/config/pride.examples.config.properties">config/pride.examples.config.properties</a>. As the configuration properties probably stay unchanged through all your experiments, you should transfer all your command line system properties to file (without the leading “-D” of course) and start your client programs without passing any system properties at all. To run the entity generator with the file-based configuration call the wrapper class <a href="https://github.com/j-pride/manual-example-code/blob/master/src/main/java/util/EntityGeneratorWithExampleConfig.java">util.EntityGeneratorWithExampleConfig</a> which is also included in the examples.</p>
 <h1 id="entity-adapter-and-descriptor">Entity, Adapter, and Descriptor</h1>
 <p>The concept of O/R mapping requires three basic building blocks:</p>
 <ul>
@@ -241,7 +246,7 @@ quickstart.CustomerClient</code></pre>
 <pre><code>java
 -D... see quick start tutorial
 pm.pride.util.generator.EntityGenerator CUSTOMER adapter.CustomerEntity -b &gt; CustomerEntity.java</code></pre>
-<p>The parameter -b tells the generator to create only an entity class without descriptor. The result is an ordinary POJO class:</p>
+<p>The parameter -b tells the generator to create only an entity class without descriptor. The result is an ordinary Java bean or POJO class:</p>
 <pre><code>package adapter;
 
 public class CustomerEntity implements Cloneable, java.io.Serializable {
@@ -383,7 +388,7 @@ Customer[] allCustomers = ri.toArray(Customer.class);</code></pre>
 <p>The method <code>streamUncloned(Class)</code> provides all results in the original entity just as it is the case in direct iterating and processing demonstrated above. This kind of stream is suitable for any amount of results but can only be used for a limited set of stream operations. Especially operations that rely on object identity will usually not work. Operations for direct processing like forEach() or count() won’t cause any problems. The direct processing example from the beginning of the query section would look like this when using streams:</p>
 <pre><code>Customer customer = new Customer();
 customer.queryAll().streamUncloned().forEach(c -&gt; System.out.println(c));</code></pre>
-<p>Examples for find and query code can by found in the class QueryClient in the directory <a href="https://github.com/j-pride/pride.pm/tree/master/src/examples/java/query">examples/query</a> of the PriDE delivery.</p>
+<p>Examples for find and query code can by found in the class <a href="https://github.com/j-pride/manual-example-code/tree/master/src/main/java/query/QueryClient.java">QueryClient</a> in the package <a href="https://github.com/j-pride/manual-example-code/tree/master/src/main/java/query">query</a> of the PriDE manual source code repository on GitHub.</p>
 <h2 id="selection-criteria">Selection criteria</h2>
 <p>PriDE has a few different features to assemble SQL where-clauses for queries:</p>
 <ul>
@@ -451,7 +456,7 @@ ResultIterator ri = new Customer().query(byMickeyMouse, 1000);</code></pre>
 <p>Using bind variables is the easiest way for you as a developer to overcome the problem of value formating, which may become a bit tricky for complex data types like dates and timestamps. However, this should of course not be the main reason to use bind variables. See chapter <a href="#mass-operations">Mass Operations</a> for purposeful usage. As long as you are working with small databases, it is OK just to utilize the formatting side effect.</p>
 <p>If you want to learn more about the expression builder right now, read the chapter <a href="#sql-expression-builder">SQL Expression Builder</a>.</p>
 <h1 id="insert-update-and-delete">Insert, Update, and Delete</h1>
-<p>The basic functionality for inserting, updating and deleting data is very simple. In addition to the basics, this chapter also explains how to manage transactions which is of course a very important issue when you manipulate the data. For most code snippets in this chapter you can find example code in the directory <a href="https://github.com/j-pride/pride.pm/tree/master/src/examples/java/modify">examples/modify</a> in the PriDE delivery and on GitHub.</p>
+<p>The basic functionality for inserting, updating and deleting data is very simple. In addition to the basics, this chapter also explains how to manage transactions which is of course a very important issue when you manipulate the data. For most code snippets in this chapter you can find example code in package <a href="https://github.com/j-pride/manual-example-code/tree/master/src/main/java/modify">modify</a> in the <a href="https://github.com/j-pride/manual-example-code/">PriDE manual source code repository on GitHub</a>.</p>
 <h2 id="insert">Insert</h2>
 <p>To insert a record in a database table, you create an instance of the corresponding entity class, set all its attributes and call its create() method:</p>
 <pre><code>Customer customer = new Customer();
@@ -482,7 +487,7 @@ for (int i = 0; i &lt; 10; i++) {
     customer.create();
     System.out.println(customer.getId());
 }</code></pre>
-<p>You find an example for a customer class with auto-increment ID in directory <a href="https://github.com/j-pride/pride.pm/tree/master/src/examples/java/modify">examples/modify</a> in the PriDE delivery.</p>
+<p>You find an example for a <a href="https://github.com/j-pride/manual-example-code/blob/master/src/main/java/modify/AutoIncCustomer.java">customer class with auto-increment ID</a> in package <a href="https://github.com/j-pride/manual-example-code/tree/master/src/main/java/modify">modify</a> in the PriDE manual source code repository on GitHub.</p>
 <h2 id="transactions">Transactions</h2>
 <p>Try to write a loop as above without anything else and you will recognize that it does not produce any rows at all in you CUSTOMER table. Most SQL databases are fully transaction-saved by default and thus require the application to properly commit its work. The foundation for transaction management with commit and rollback is the <a href="https://en.wikipedia.org/wiki/ACID_(computer_science)">ACID principle</a>, which every developer must be well aware of as it is deep-seated in JDBC and every JDBC-based persistence manager.</p>
 <p>In a JSE environment you will by default lose all your database work when the application terminates and you forgot to explicitly run a commit operation. In enterprise environments like standard JEE or Spring the application is usually not responsible for ending transactions by programmatic operations. Most applications use so-called container-managed transactions which are implicitly controlled by method annotations and exception handling. This is a very convenient and recommendable technique and it is also the key for composing higher-level methods from calls of lower-level methods in an elegant way according to the <a href="http://principles-wiki.net/principles:single_level_of_abstraction">Single Level of Abstraction Principle</a>. No method has to worry about whether it is the very top-level of the (potentially still growing) composition tree.</p>
@@ -541,7 +546,7 @@ paddy.commit();</code></pre>
 <h1 id="entity-inheritance">Entity Inheritance</h1>
 <p>From a technical point of view, entity inheritance is of interest to encapsulate basic design concepts in a base class which should apply to various entity types in the same way. The chapter <a href="#find-and-query">Find and Query</a> already mentioned a few examples like a default public clone() method and a toString() method. Another typical reason is a stereotype set of table rows which should be present in each table like an auto-incremented technical ID, a creation time and a last modification time, or a lock counter for concurrency control by <a href="#optimistic-locking">optimistic locking</a>.</p>
 <p>As a simple example for inheritance, you can split up the Customer entity in a way that the ID is encapsulated in a separate entity class IdentifiedEntity which the Customer entity is derived from. This is based on the assumption that all entity classes should have a unique ID row which is a wide-spread concept.</p>
-<p>Inheritance in PriDE is a bit inconvenient as you have to maintain more than one inheritance hierarchy. However, new tables and entities don’t shoot like mushrooms out of the ground, so there’s no reason to bother. Beside the entities, you also have to relate both entities’ descriptors, and if you are working with separate adapters, the adapter classes have to be derived from each other too. As long as you are using 1:1 mappings, you can let PriDE’s entity generator do most of the job. So here is how to generate the little inheritance hierarchy which you can find in directory <a href="https://github.com/j-pride/pride.pm/tree/master/src/examples/java/inheritance">examples/inheritance</a> in the PriDE delivery or on GitHub. You start with generating the base class. As the generator is based on table structures in a database and there is no such concept like “base classes” in SQL, you must ensure that the CUSTOMER table is already present (resp. any other table following the same pattern with a technical ID) . To generate a class which does not map all the columns, you specify the columns of interest as comma-separated list along with the table name when calling the generator:</p>
+<p>Inheritance in PriDE is a bit inconvenient as you have to maintain more than one inheritance hierarchy. However, new tables and entities don’t shoot like mushrooms out of the ground, so there’s no reason to bother. Beside the entities, you also have to relate both entities’ descriptors, and if you are working with separate adapters, the adapter classes have to be derived from each other too. As long as you are using 1:1 mappings, you can let PriDE’s entity generator do most of the job. So here is how to generate the little inheritance hierarchy which you can find in package <a href="https://github.com/j-pride/manual-example-code/tree/master/src/main/java/inheritance">inheritance</a> in the PriDE manual examples source code repository on <a href="https://github.com/j-pride/manual-example-code">GitHub</a>. You start with generating the base class. As the generator is based on table structures in a database and there is no such concept like “base classes” in SQL, you must ensure that the CUSTOMER table is already present (resp. any other table following the same pattern with a technical ID) . To generate a class which does not map all the columns, you specify the columns of interest as comma-separated list along with the table name when calling the generator:</p>
 <pre><code>java
 util.EntityGeneratorWithExampleConfig
 CUSTOMER(ID) inherit.AbstractHybrid &gt; AbstractHybrid.java</code></pre>
@@ -623,26 +628,26 @@ CUSTOMER inherit.DerivedCustomer
 <li>The RecordDescriptor contains only mappings for these attributes and refers to the RecordDescriptor from the base class. The complete mapping for the CUSTOMER table is assembled from both descriptors.</li>
 <li>The re-constructor doesn’t call the findx() method but the super re-constructor from AbstractEntity instead which already does the find job. The base class will consider <em>all</em> the mappings because the derived class overrides the methods getDescriptor() and getKeyFields().</li>
 </ul>
-<p>The resulting DerivedCustomer class behaves exactly like the Customer class from the <a href="#quick-start-tutorial">Quick Start Tutorial</a>. You can check that by running the CustomerClient from the quick start tutorial in parallel with the equivalent DerivedCustomerClient from the examples/inherit directory. Both have the same functionality and operate on the same table but work with the two different entity representations. This reveals an important fact about PriDE’s concept how inheritance is mapped to SQL where you don’t find such a concept. In terms of JPA, PriDE follows the <a href="https://en.wikibooks.org/wiki/Java_Persistence/Inheritance#Example_table_per_class_inheritance_tables_in_database">table-per-class strategy</a>. For every non-abstract class in the hierarchy there must exist a database table with columns for <em>all</em> mapped attributes of the class itself and <em>all</em> its super classes.</p>
+<p>The resulting DerivedCustomer class behaves exactly like the Customer class from the <a href="#quick-start-tutorial">Quick Start Tutorial</a>. You can check that by running the <a href="https://github.com/j-pride/manual-example-code/blob/master/src/main/java/quickstart/CustomerClient.java">CustomerClient</a> from the quick start tutorial in parallel with the equivalent <a href="https://github.com/j-pride/manual-example-code/blob/master/src/main/java/inherit/DerivedCustomerClient.java">DerivedCustomerClient</a> from the package <a href="https://github.com/j-pride/manual-example-code/tree/master/src/main/java/inherit">inherit</a>. Both have the same functionality and operate on the same table but work with the two different entity representations. This reveals an important fact about PriDE’s concept how inheritance is mapped to SQL where you don’t find such a concept. In terms of JPA, PriDE follows the <a href="https://en.wikibooks.org/wiki/Java_Persistence/Inheritance#Example_table_per_class_inheritance_tables_in_database">table-per-class strategy</a>. For every non-abstract class in the hierarchy there must exist a database table with columns for <em>all</em> mapped attributes of the class itself and <em>all</em> its super classes.</p>
 <h2 id="inheritance-with-separate-adapters">Inheritance with separate adapters</h2>
 <p>When you are working with separate adapters, you need a derivation for both, entity class and adapter class. The generator calls look like that:</p>
-<pre><code>## Entity base class
+<pre><code># Entity base class
 java util.EntityGeneratorWithExampleConfig
 CUSTOMER(id) inherit.AbstractEntity -b
 
-## Adapter base class
+# Adapter base class
 java util.EntityGeneratorWithExampleConfig
 CUSTOMER(id) inherit.AbstractAdapter inherit.AbstractEntity
 
-## Derived Customer entity class
+# Derived Customer entity class
 java util.EntityGeneratorWithExampleConfig
 CUSTOMER inherit.DerivedCustomerEntity -b inherit.AbstractAdapter
 
-## Derived Customer adapter class
+# Derived Customer adapter class
 java util.EntityGeneratorWithExampleConfig
 CUSTOMER inherit.DerivedCustomerAdapter inherit.DerivedCustomerEntity inherit.AbstractAdapter</code></pre>
 <p>An important detail is that generating the derived bean class requires to specify the base <em>adapter</em> class, not the base <em>entity</em> class in the generator call. In fact the generator needs to know about both, but the entity class can be determined from the adapter class’ record descriptor. The pure base entity class however doesn’t know about its mapping - that’s lastly the goal of the separation ;-)</p>
-<p>The output of these generator calls is a very straight-forward separation of the hybrid code above. There is nothing tricky to know about. You can find the outcome in the examples/inherit directory from the PriDE delivery resp. on GitHub.</p>
+<p>The output of these generator calls is a very straight-forward separation of the hybrid code above. There is nothing tricky to know about. You can find the outcome in the package <a href="https://github.com/j-pride/manual-example-code/tree/master/src/main/java/inherit">inherit</a> from the PriDE manual examples source code repository on <a href="https://github.com/j-pride/manual-example-code">GitHub</a>.</p>
 <p>Entity inheritance hierarchies are of course not limited in their depth. E.g. if it were a typical pattern that entities have names, try this command and have a look on the output:</p>
 <pre><code>java util.EntityGeneratorWithExampleConfig
 CUSTOMER(name) inherit.AbstractNamedHybrid -h inherit.AbstractHybrid</code></pre>
@@ -652,26 +657,26 @@ CUSTOMER(name) inherit.AbstractNamedHybrid -h inherit.AbstractHybrid</code></pre
 <h2 id="elaborated-sql-vs.-java">Elaborated SQL vs. Java</h2>
 <p>Let’s take up the good old CUSTOMER table from the <a href="#quick-start-tutorial">Quick Start Tutorial</a> and let’s suppose you want to implement a batch application querying for suspicious new customer registrations, which the system will initially block from order placement until the customers have verified their identity (somehow). We are looking for customers in a certain ID range with</p>
 <ul>
-<li>Either name and first name consist only of a single letter or</li>
-<li>The summarized length of name and first name id less than 7 letters or</li>
+<li>The summarized length of name and first name is less than 7 letters or</li>
+<li>The name consist only of a single letter or</li>
 <li>Name and first name are identical</li>
 </ul>
 <p>SQL is a very powerful and highly expressive and compact language for things like that. The appropriate where-clause would look like that, where only the boundaries of the ID range differ from one call to the next:</p>
 <pre><code>id between &lt;lowest&gt; and &lt;highest&gt; and (
-    ( length(name) + length(first_name) &lt; 7) or
-    ( length(name) &lt; 2 and length(first_name) &lt; 2 ) or
+    ( length(name) + length(first_name) &lt; 7 ) or
+    ( length(name) &lt; 2 ) or
     ( name = first_name )
 )</code></pre>
 <p>No matter which assembly API your Java persistence manager provides - JPA’s criteria API, PriDE’s WhereCondition, or JOOQ’s DSL API - it will cost a lot more Java code than SQL code to assemble the expression, and it will become hard to tell from the Java code what the resulting SQL may look like. So the recommendation is: for the sake of SQL maintainability, integrate the SQL code in your Java code <em>as is</em>. Of course, Java won’t accept SQL syntax, so “integration as is” means integration as a String after having verified syntactical correctness in a suitable SQL tool. Unfortunately this would raise another maintenance problem: the String literal is a big, big <a href="https://en.wikipedia.org/wiki/Magic_number_(programming)">magic number</a> composite and conflicts with the DRY principle. Although it contains various column name references you won’t be able to safely detect that the query might be affected e.g. when the NAME column requires a size change. You hopefully don’t try a full text search for the term “name” ;-)</p>
 <p>As a first step towards a solution, PriDE’s entity generator generates constants for table and column names, and it is strongly recommended to use these columns for SQL expression assembly. However concatenating String fragments and constants won’t result in better readability:</p>
 <pre><code>COL_ID + &quot; between &quot; + lowest + &quot; and &quot; + highest + &quot; and ( &quot; +
-&quot;( length( + COL_NAME + &quot;) + length( &quot; + COL_FIRST_NAME + &quot;) &lt; 7) or&quot; +
+&quot;( length( + COL_NAME + &quot;) + length( &quot; + COL_FIRST_NAME + &quot;) &lt; 7 ) or&quot; +
 ...</code></pre>
 <p>String.format() is designed to keep the structure of the result string recognizable, but in this case it won’t help too much:</p>
 <pre><code>String.format(
 &quot;%s between %d and %d and (&quot; +
-&quot;    ( length(%s) + length(%s) &lt; 7) or&quot; +
-&quot;    ( length(%4$s) &lt; 2 and length(%5$s) &lt; 2 ) or&quot; +
+&quot;    ( length(%s) + length(%s) &lt; 7 ) or&quot; +
+&quot;    ( length(%4$s) &lt; 2 ) or&quot; +
 &quot;    ( %4$s = %5$s )&quot; +
 &quot;)&quot;,
 COL_ID, lowest, highest, COL_NAME, COL_FIRST_NAME);</code></pre>
@@ -679,30 +684,32 @@ COL_ID, lowest, highest, COL_NAME, COL_FIRST_NAME);</code></pre>
 <p>PriDE’s expression builder extends String.format() in a way, the you can use identifiers rather than just % and position numbers as variables. The builder is address by the static function <code>build(String formatString, Object... args)</code> in class pm.pride.SQL. Identifiers in the format string that require replacement by any of the following arguments begin with an @ character and end with the first character that is neither a letter nor an underscore. Based on that, the SQL can be represented almost natively:</p>
 <pre><code>SQL.build(
 &quot;@id between %d and %d and (&quot; +
-&quot;    ( length(@name) + length(@first_name) &lt; 7) or&quot; +
-&quot;    ( length(@name) &lt; 2 and length(@first_name) &lt; 2 ) or&quot; +
+&quot;    ( length(@name) + length(@first_name) &lt; 7 ) or&quot; +
+&quot;    ( length(@name) &lt; 2 ) or&quot; +
 &quot;    ( @name = @first_name )&quot; +
 &quot;)&quot;,
-COL_ID, lowest, highest, COL_NAME, COL_FIRSTNAME);</code></pre>
-<p>As you can see, the identifier feature can be combined with Java’s standard replacement feature. arguments are assigned to identifiers in order of occurrence in the format string. Repeated occurrences of an identifier are replaced by the argument which was assigned to the identifier on its first occurrence.</p>
+COL_ID, lowest, highest, COL_NAME, COL_FIRST_NAME);</code></pre>
+<p>As you can see, the identifier feature can be combined with Java’s standard replacement feature. Arguments are assigned to identifiers in order of occurrence in the format string. Repeated occurrences of an identifier are replaced by the argument which was assigned to the identifier on its first occurrence.</p>
+<p>By default, the identifiers and the assigned argument values don’t have to be identical, so the identifiers may be abbreviations or - vice versa - more descriptive forms of the actual table or column names passed as arguments. The possible risk is a hidden miss-assignment which still leads to syntactically valid SQL but to a wrong business logic. Referring to the example, swap the constants COL_NAME and COL_FIRST_NAME in the argument list and it results only in a minimal subtle miss behavior. If you don’t have fine-grained test suite to reveal such a bug, you may use the expression builder in a more restrictive way. If you call SQL.buildx() instead of SQL.build() the builder will throw an InvalidArgumentException if the variable identifiers don’t match the values of the assigned arguments based on a case-insensitive string comparison. E.g. the following SQL assembly would fail as the argument value “name” would be assigned to the variable identifier “first_name”:</p>
+<pre><code>SQL.buildx(&quot;@first_name is null&quot;, &quot;name&quot;)</code></pre>
+<p>This variant implies that you use the % notation where name conformity doesn’t make sense, e.g. for a column <em>value</em> instead of a column <em>name</em> like the ID range boundary values in the examples above. Additional validation options are available when you use the class SQLExpressionBuilder and its constructors directly. They allow to specify if the identifier comparison should be performed case sensitive or case insensitive and if the builder should actually throw an exception in case of miss-matches or just print out a warning on Stderr. Furthermore you may change the validation behavior of SQL.build() by setting SQLExpressionBuilder’s static member <code>validationDefault</code>.</p>
 <p>If you need lots of arguments, it is helpful to split the argument list in multiple lines like the format string. Each argument line contains only the arguments which are (first) assigned to the identifiers of the corresponding line from the format string. Applied to the example above it looks like that:</p>
 <pre><code>SQL.build(
 &quot;@id between %d and %d and (&quot; +
-&quot;    ( length(@name) + length(@first_name) &lt; 7) or&quot; +
-&quot;    ( length(@name) &lt; 2 and length(@first_name) &lt; 2 ) or&quot; +
+&quot;    ( length(@name) + length(@first_name) &lt; 7 ) or&quot; +
+&quot;    ( length(@name) &lt; 2 ) or&quot; +
 &quot;    ( @name = @first_name )&quot; +
 &quot;)&quot;,
 COL_ID, lowest, highest,
 COL_NAME, COL_FIRST_NAME);</code></pre>
-<p>A small expression like above doesn’t need those tricks, but e.g. a complex SQL merge statement may require 20 arguments and more. Alternatively you may also combine identifiers with position numbers as known from String.format(), so that you can check the identifier/argument matching by counting:</p>
+<p>A small expression as the one above doesn’t need those tricks, but e.g. a complex SQL merge statement may require 20 arguments and more. Alternatively you may combine identifiers with position numbers as known from String.format(), so that you can check the identifier/argument matching by counting:</p>
 <pre><code>SQL.build(
 &quot;@1$id between %2$d and %3$d and (&quot; +
-&quot;    ( length(@4$name) + length(@5$first_name) &lt; 7) or&quot; +
-&quot;    ( length(@name) &lt; 2 and length(@first_name) &lt; 2 ) or&quot; +
+&quot;    ( length(@4$name) + length(@5$first_name) &lt; 7 ) or&quot; +
+&quot;    ( length(@name) &lt; 2 ) or&quot; +
 &quot;    ( @name = @first_name )&quot; +
 &quot;)&quot;,
-COL_ID, lowest, highest,
-COL_NAME, COL_FIRST_NAME);</code></pre>
+COL_ID, lowest, highest, COL_NAME, COL_FIRST_NAME);</code></pre>
 <p>Only one occurrence of an identifier needs to be accompanied by a position specification, while all the others automatically inherit the argument assignment. You may add the position number to all occurrences but then they have to be identical. Re-positioning is not allowed.</p>
 <h2 id="building-and-formatting">Building and Formatting</h2>
 <p>All identifiers are replaced by the string representation of its assigned argument. The expression builder is <em>not</em> concerned with SQL value formatting. If you do not only pass column, table, and alias names as arguments but also <em>values</em>, you must ensure proper SQL formatting. There are different approaches to achieve that.</p>
@@ -725,7 +732,7 @@ COL_NAME, COL_FIRST_NAME);</code></pre>
     street varchar(30),
     city varchar(30)
 );</code></pre>
-<p>Each customer optionally has an address attached. You find a corresponding entity and a table creation class in the directory examples/joins.</p>
+<p>Each customer optionally has an address attached. You find a corresponding <a href="https://github.com/j-pride/manual-example-code/blob/master/src/main/java/joins/Address.java">Address entity</a> and a <a href="https://github.com/j-pride/manual-example-code/blob/master/src/main/java/joins/CreateAddressTable.java">table creation class</a> in the package <a href="https://github.com/j-pride/manual-example-code/tree/master/src/main/java/joins">joins</a> of PriDE’s manual examples source code repository on <a href="https://github.com/j-pride/manual-example-code">GitHub</a>.</p>
 				</div>
 			</section>
 
