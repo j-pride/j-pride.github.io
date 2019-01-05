@@ -117,19 +117,19 @@ CUSTOMER inherit.DerivedCustomer
 <p>The resulting DerivedCustomer class behaves exactly like the Customer class from the <a href="quick-start-tutorial.html">Quick Start Tutorial</a>. You can check that by running the CustomerClient from the quick start tutorial in parallel with the equivalent DerivedCustomerClient from the examples/inherit directory. Both have the same functionality and operate on the same table but work with the two different entity representations. This reveals an important fact about PriDE’s concept how inheritance is mapped to SQL where you don’t find such a concept. In terms of JPA, PriDE follows the <a href="https://en.wikibooks.org/wiki/Java_Persistence/Inheritance#Example_table_per_class_inheritance_tables_in_database">table-per-class strategy</a>. For every non-abstract class in the hierarchy there must exist a database table with columns for <em>all</em> mapped attributes of the class itself and <em>all</em> its super classes.</p>
 <h2 id="inheritance-with-separate-adapters">Inheritance with separate adapters</h2>
 <p>When you are working with separate adapters, you need a derivation for both, entity class and adapter class. The generator calls look like that:</p>
-<pre><code>## Entity base class
+<pre><code># Entity base class
 java util.EntityGeneratorWithExampleConfig
 CUSTOMER(id) inherit.AbstractEntity -b
 
-## Adapter base class
+# Adapter base class
 java util.EntityGeneratorWithExampleConfig
 CUSTOMER(id) inherit.AbstractAdapter inherit.AbstractEntity
 
-## Derived Customer entity class
+# Derived Customer entity class
 java util.EntityGeneratorWithExampleConfig
 CUSTOMER inherit.DerivedCustomerEntity -b inherit.AbstractAdapter
 
-## Derived Customer adapter class
+# Derived Customer adapter class
 java util.EntityGeneratorWithExampleConfig
 CUSTOMER inherit.DerivedCustomerAdapter inherit.DerivedCustomerEntity inherit.AbstractAdapter</code></pre>
 <p>An important detail is that generating the derived bean class requires to specify the base <em>adapter</em> class, not the base <em>entity</em> class in the generator call. In fact the generator needs to know about both, but the entity class can be determined from the adapter class’ record descriptor. The pure base entity class however doesn’t know about its mapping - that’s lastly the goal of the separation ;-)</p>

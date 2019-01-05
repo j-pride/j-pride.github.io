@@ -36,26 +36,26 @@
 <h2 id="elaborated-sql-vs.-java">Elaborated SQL vs. Java</h2>
 <p>Let’s take up the good old CUSTOMER table from the <a href="quick-start-tutorial.html">Quick Start Tutorial</a> and let’s suppose you want to implement a batch application querying for suspicious new customer registrations, which the system will initially block from order placement until the customers have verified their identity (somehow). We are looking for customers in a certain ID range with</p>
 <ul>
-<li>Either name and first name consist only of a single letter or</li>
-<li>The summarized length of name and first name id less than 7 letters or</li>
+<li>The summarized length of name and first name is less than 7 letters or</li>
+<li>The name consist only of a single letter or</li>
 <li>Name and first name are identical</li>
 </ul>
 <p>SQL is a very powerful and highly expressive and compact language for things like that. The appropriate where-clause would look like that, where only the boundaries of the ID range differ from one call to the next:</p>
 <pre><code>id between &lt;lowest&gt; and &lt;highest&gt; and (
-    ( length(name) + length(first_name) &lt; 7) or
-    ( length(name) &lt; 2 and length(first_name) &lt; 2 ) or
+    ( length(name) + length(first_name) &lt; 7 ) or
+    ( length(name) &lt; 2 ) or
     ( name = first_name )
 )</code></pre>
 <p>No matter which assembly API your Java persistence manager provides - JPA’s criteria API, PriDE’s WhereCondition, or JOOQ’s DSL API - it will cost a lot more Java code than SQL code to assemble the expression, and it will become hard to tell from the Java code what the resulting SQL may look like. So the recommendation is: for the sake of SQL maintainability, integrate the SQL code in your Java code <em>as is</em>. Of course, Java won’t accept SQL syntax, so “integration as is” means integration as a String after having verified syntactical correctness in a suitable SQL tool. Unfortunately this would raise another maintenance problem: the String literal is a big, big <a href="https://en.wikipedia.org/wiki/Magic_number_(programming)">magic number</a> composite and conflicts with the DRY principle. Although it contains various column name references you won’t be able to safely detect that the query might be affected e.g. when the NAME column requires a size change. You hopefully don’t try a full text search for the term “name” ;-)</p>
 <p>As a first step towards a solution, PriDE’s entity generator generates constants for table and column names, and it is strongly recommended to use these columns for SQL expression assembly. However concatenating String fragments and constants won’t result in better readability:</p>
 <pre><code>COL_ID + &quot; between &quot; + lowest + &quot; and &quot; + highest + &quot; and ( &quot; +
-&quot;( length( + COL_NAME + &quot;) + length( &quot; + COL_FIRST_NAME + &quot;) &lt; 7) or&quot; +
+&quot;( length( + COL_NAME + &quot;) + length( &quot; + COL_FIRST_NAME + &quot;) &lt; 7 ) or&quot; +
 ...</code></pre>
 <p>String.format() is designed to keep the structure of the result string recognizable, but in this case it won’t help too much:</p>
 <pre><code>String.format(
 &quot;%s between %d and %d and (&quot; +
-&quot;    ( length(%s) + length(%s) &lt; 7) or&quot; +
-&quot;    ( length(%4$s) &lt; 2 and length(%5$s) &lt; 2 ) or&quot; +
+&quot;    ( length(%s) + length(%s) &lt; 7 ) or&quot; +
+&quot;    ( length(%4$s) &lt; 2 ) or&quot; +
 &quot;    ( %4$s = %5$s )&quot; +
 &quot;)&quot;,
 COL_ID, lowest, highest, COL_NAME, COL_FIRST_NAME);</code></pre>
@@ -63,30 +63,32 @@ COL_ID, lowest, highest, COL_NAME, COL_FIRST_NAME);</code></pre>
 <p>PriDE’s expression builder extends String.format() in a way, the you can use identifiers rather than just % and position numbers as variables. The builder is address by the static function <code>build(String formatString, Object... args)</code> in class pm.pride.SQL. Identifiers in the format string that require replacement by any of the following arguments begin with an @ character and end with the first character that is neither a letter nor an underscore. Based on that, the SQL can be represented almost natively:</p>
 <pre><code>SQL.build(
 &quot;@id between %d and %d and (&quot; +
-&quot;    ( length(@name) + length(@first_name) &lt; 7) or&quot; +
-&quot;    ( length(@name) &lt; 2 and length(@first_name) &lt; 2 ) or&quot; +
+&quot;    ( length(@name) + length(@first_name) &lt; 7 ) or&quot; +
+&quot;    ( length(@name) &lt; 2 ) or&quot; +
 &quot;    ( @name = @first_name )&quot; +
 &quot;)&quot;,
-COL_ID, lowest, highest, COL_NAME, COL_FIRSTNAME);</code></pre>
-<p>As you can see, the identifier feature can be combined with Java’s standard replacement feature. arguments are assigned to identifiers in order of occurrence in the format string. Repeated occurrences of an identifier are replaced by the argument which was assigned to the identifier on its first occurrence.</p>
+COL_ID, lowest, highest, COL_NAME, COL_FIRST_NAME);</code></pre>
+<p>As you can see, the identifier feature can be combined with Java’s standard replacement feature. Arguments are assigned to identifiers in order of occurrence in the format string. Repeated occurrences of an identifier are replaced by the argument which was assigned to the identifier on its first occurrence.</p>
+<p>By default, the identifiers and the assigned argument values don’t have to be identical, so the identifiers may be abbreviations or - vice versa - more descriptive forms of the actual table or column names passed as arguments. The possible risk is a hidden miss-assignment which still leads to syntactically valid SQL but to a wrong business logic. Referring to the example, swap the constants COL_NAME and COL_FIRST_NAME in the argument list and it results only in a minimal subtle miss behavior. If you don’t have fine-grained test suite to reveal such a bug, you may use the expression builder in a more restrictive way. If you call SQL.buildx() instead of SQL.build() the builder will throw an InvalidArgumentException if the variable identifiers don’t match the values of the assigned arguments based on a case-insensitive string comparison. E.g. the following SQL assembly would fail as the argument value “name” would be assigned to the variable identifier “first_name”:</p>
+<pre><code>SQL.buildx(&quot;@first_name is null&quot;, &quot;name&quot;)</code></pre>
+<p>This variant implies that you use the % notation where name conformity doesn’t make sense, e.g. for a column <em>value</em> instead of a column <em>name</em> like the ID range boundary values in the examples above. Additional validation options are available when you use the class SQLExpressionBuilder and its constructors directly. They allow to specify if the identifier comparison should be performed case sensitive or case insensitive and if the builder should actually throw an exception in case of miss-matches or just print out a warning on Stderr. Furthermore you may change the validation behavior of SQL.build() by setting SQLExpressionBuilder’s static member <code>validationDefault</code>.</p>
 <p>If you need lots of arguments, it is helpful to split the argument list in multiple lines like the format string. Each argument line contains only the arguments which are (first) assigned to the identifiers of the corresponding line from the format string. Applied to the example above it looks like that:</p>
 <pre><code>SQL.build(
 &quot;@id between %d and %d and (&quot; +
-&quot;    ( length(@name) + length(@first_name) &lt; 7) or&quot; +
-&quot;    ( length(@name) &lt; 2 and length(@first_name) &lt; 2 ) or&quot; +
+&quot;    ( length(@name) + length(@first_name) &lt; 7 ) or&quot; +
+&quot;    ( length(@name) &lt; 2 ) or&quot; +
 &quot;    ( @name = @first_name )&quot; +
 &quot;)&quot;,
 COL_ID, lowest, highest,
 COL_NAME, COL_FIRST_NAME);</code></pre>
-<p>A small expression like above doesn’t need those tricks, but e.g. a complex SQL merge statement may require 20 arguments and more. Alternatively you may also combine identifiers with position numbers as known from String.format(), so that you can check the identifier/argument matching by counting:</p>
+<p>A small expression as the one above doesn’t need those tricks, but e.g. a complex SQL merge statement may require 20 arguments and more. Alternatively you may combine identifiers with position numbers as known from String.format(), so that you can check the identifier/argument matching by counting:</p>
 <pre><code>SQL.build(
 &quot;@1$id between %2$d and %3$d and (&quot; +
-&quot;    ( length(@4$name) + length(@5$first_name) &lt; 7) or&quot; +
-&quot;    ( length(@name) &lt; 2 and length(@first_name) &lt; 2 ) or&quot; +
+&quot;    ( length(@4$name) + length(@5$first_name) &lt; 7 ) or&quot; +
+&quot;    ( length(@name) &lt; 2 ) or&quot; +
 &quot;    ( @name = @first_name )&quot; +
 &quot;)&quot;,
-COL_ID, lowest, highest,
-COL_NAME, COL_FIRST_NAME);</code></pre>
+COL_ID, lowest, highest, COL_NAME, COL_FIRST_NAME);</code></pre>
 <p>Only one occurrence of an identifier needs to be accompanied by a position specification, while all the others automatically inherit the argument assignment. You may add the position number to all occurrences but then they have to be identical. Re-positioning is not allowed.</p>
 <h2 id="building-and-formatting">Building and Formatting</h2>
 <p>All identifiers are replaced by the string representation of its assigned argument. The expression builder is <em>not</em> concerned with SQL value formatting. If you do not only pass column, table, and alias names as arguments but also <em>values</em>, you must ensure proper SQL formatting. There are different approaches to achieve that.</p>
