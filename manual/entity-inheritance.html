@@ -40,10 +40,9 @@ CUSTOMER(ID) inherit.AbstractHybrid &gt; AbstractHybrid.java</code></pre>
 <pre><code>abstract public class AbstractHybrid extends MappedObject implements Cloneable, java.io.Serializable {
     public static final String COL_ID = &quot;id&quot;;
 
-    protected static final RecordDescriptor red = new RecordDescriptor
-        (AbstractHybrid.class, null, null, new String[][] {
-            { COL_ID,   &quot;getId&quot;,   &quot;setId&quot; },
-        });
+    protected static final RecordDescriptor red =
+      new RecordDescriptor(AbstractHybrid.class, null, null)
+            .row( COL_ID, &quot;getId&quot;, &quot;setId&quot; );
 
     public RecordDescriptor getDescriptor() { return red; }
 
@@ -79,11 +78,10 @@ CUSTOMER inherit.DerivedCustomer
     public static final String COL_NAME = &quot;name&quot;;
     public static final String COL_FIRST_NAME = &quot;first_name&quot;;
 
-    protected static final RecordDescriptor red = new RecordDescriptor
-        (DerivedCustomer.class, TABLE, inherit.AbstractHybrid.red, new String[][] {
-            { COL_NAME,   &quot;getName&quot;,   &quot;setName&quot; },
-            { COL_FIRST_NAME,   &quot;getFirstName&quot;,   &quot;setFirstName&quot; },
-        });
+    protected static final RecordDescriptor red =
+      new RecordDescriptor(DerivedCustomer.class, TABLE, inherit.AbstractHybrid.red)
+        .row(COL_NAME, &quot;getName&quot;, &quot;setName&quot;)
+        .row(COL_FIRST_NAME, &quot;getFirstName&quot;, &quot;setFirstName&quot;);
 
     public RecordDescriptor getDescriptor() { return red; }
 

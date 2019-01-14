@@ -42,7 +42,7 @@
 <h2 id="find">Find</h2>
 <p>Examples for finding a record with PriDE were already part of the <a href="quick-start-tutorial.html">quick start tutorial</a> and the chapter about <a href="entity-adapter-and-descriptor.html">entity, adapter, and descriptor</a>. But let’s go into some details here for a deeper understanding. The important things to know:</p>
 <ul>
-<li>No matter if you are working with hybrid objects or a separation of entity and adapter - PriDE never creates entities for you but expects you to provide them.</li>
+<li>No matter if you are working with hybrid objects or a separation of entity and adapter - PriDE doesn’t creates entities for you but expects you to provide them.</li>
 <li>Find operations work like a query-by-example. You provide an entity with all the primary key fields initialized and call the find() or findx() method without parameters. This is a method of the entity class itself when using hybrid entities, otherwise it is a method of the corresponding adapter class.</li>
 <li>The result of the find operation is placed in the same entity which you provided the key fields by. The boolean return value of the find() method tells the caller if there was actually a matching record found. The findx() method reports a missing match by an exception which if of interest for situations where a missing result is a unexpected case. Think of typical navigation like retrieving the customer who placed an order. You usually don’t expect the customer not being present in the database.</li>
 </ul>
@@ -141,8 +141,8 @@ ResultIterator ri = new Customer().query(byFirstNameAndEmptyName);</code></pre>
         .or(COL_FIRST_NAME, IN, &quot;Mickey&quot;, &quot;Mouse&quot;)
         .or(COL_NAME, IN, &quot;Mickey&quot;, &quot;Mouse&quot;)
     .bracketClose();</code></pre>
-<p>What of you are interested in other suspicious cases where name and first name are equal. In this case, the value is a field name itself and you have to bypass the value formatting. This is achieved by passing raw SQL values like that:</p>
-<pre><code>.and(COL_FIRST_NAME, SQL.raw(COL_NAME))</code></pre>
+<p>What of you are interested in other suspicious cases where name and first name are equal. In this case, the value is a field name itself and you have to bypass the value formatting. This is achieved by passing pre-formatted SQL values like that:</p>
+<pre><code>.and(COL_FIRST_NAME, SQL.pre(COL_NAME))</code></pre>
 <p>Finally the WhereCondition can be extended by ordering and grouping clauses. E.g. the following condition selects all customers ordered by name and first name:</p>
 <pre><code>new WhereCondition().orderBy(COL_NAME).orderBy(COL_FIRST_NAME)</code></pre>
 <p>Especially when you select data <em>in order</em>, the ResultIterator provides the additional methods spoolToList() and spoolToArray() to read results in chunks. This will be explained in more details in chapter <a href="mass-operations.html">Mass Operations</a>.</p>

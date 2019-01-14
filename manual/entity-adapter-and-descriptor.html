@@ -86,12 +86,11 @@ public class CustomerAdapter extends ObjectAdapter {
     public static final String COL_NAME = &quot;name&quot;;
     public static final String COL_FIRST_NAME = &quot;first_name&quot;;
 
-    protected static final RecordDescriptor red = new RecordDescriptor
-        (CustomerEntity.class, TABLE, null, new String[][] {
-            { COL_ID,   &quot;getId&quot;,   &quot;setId&quot; },
-            { COL_NAME,   &quot;getName&quot;,   &quot;setName&quot; },
-            { COL_FIRST_NAME,   &quot;getFirstName&quot;,   &quot;setFirstName&quot; },
-        });
+    protected static final RecordDescriptor red =
+      new RecordDescriptor(CustomerEntity.class, TABLE, null)
+        .row(COL_ID, &quot;getId&quot;, &quot;setId&quot;)
+        .row(COL_NAME, &quot;getName&quot;, &quot;setName&quot;)
+        .row(COL_FIRST_NAME, &quot;getFirstName&quot;, &quot;setFirstName&quot;);
 
     public RecordDescriptor getDescriptor() { return red; }
 
@@ -115,17 +114,17 @@ adapter.find();</code></pre>
 <p>If you want to minimize the amount of code, you are free to invent your own adapter concept. Have a look on the base classes pm.pride.ObjectAdapter for the adapter above and pm.pride.MappedObject for the hybrid variant from the <a href="quick-start-tutorial.html">quick start tutorial</a>. Both are minimalistic implementations of the mix-in pm.pride.DatabaseAdapterMixin which is the actual provider for all entity-related persistence operations. It is in turn based on the static methods of the class pm.pride.DatabaseAdapter. Using this class or the mix-in you could easily produce a generic adapter being responsible for multiple entity types similar to JPA’s EntityManager interface.</p>
 <p>One note concerning packages: When you actually use the pattern of separate adapters in a sophisticated architecture, you should consider generating entity and adapter classes in different packages. Only the entity classes should be part of the interface for dependent code while the adapter classes should completely be hidden behind facade components as proposed in the wide-spread <a href="https://martinfowler.com/eaaCatalog/repository.html">repository pattern</a>.</p>
 <h2 id="descriptor-structure">Descriptor structure</h2>
-<p>The examples for descriptors you have seen so far should already clarify most of their structure. You will see more complicated examples in following chapters of this manual. A descriptor in assembled from the following information:</p>
+<p>The examples for descriptors you have seen so far should already clarify most of the descriptor structure. You will see more complicated examples in following chapters of this manual. A descriptor is assembled from the following information:</p>
 <ul>
 <li><p>The name of the entity class and the name of the database table which the entity class is mapped to. Preferably the table name is not specified as a string-literal but as a reference to a constant representing the table name. If you have a look on the outcome of PriDE’s code generator, there are appropriate constants generated and used.</p></li>
 <li><p>A reference to the descriptor of a base class. This is of interest when you build up an inheritance hierarchy between entity classes as explained in chapter <a href="entity-inheritance.html">Entity Inheritance</a>.</p></li>
-<li><p>An attribute description map in form of a two-dimensional string array. The array contains one sub array for every table column resp. entity class attribute consisting of</p>
+<li><p>A table row to attribute mapping by adding calls of the row() method for every row of interest. The row() method returns the descriptor object, making up a fluent API. Every row/attribute mapping consists of</p>
 <ul>
 <li>The name of the database column (similar to table names: avoid using string-literals here)</li>
 <li>The name of the getter method for the corresponding attribute in the entity class</li>
 <li>The name of the setter method</li>
 </ul>
-<p>The methods are the ones which the adapter is supposed to transport entity attributes to the database via JDBC and vice versa. The getter methods’ return type implies which methods the adapter uses to access JDBC statements and result sets and how to translate the values to SQL syntax. Getters are mandatory whereas setters may be null in case of entity types that are never supposed to be written to the database. A typical example for this case are entity classes representing the result of SQL joins (see chapter <a href="joins.html">Joins</a>).</p></li>
+<p>The methods are the ones which the adapter is supposed to use for transporting entity attributes to the database via JDBC and vice versa. The getter methods’ return type implies which methods the adapter uses to access JDBC statements and result sets and how to translate the values to SQL syntax. Getters are mandatory whereas setters may be null in case of entity types that are never supposed to be written to the database. A typical example for this case are entity classes representing the result of SQL joins (see chapter <a href="joins.html">Joins</a>).</p></li>
 </ul>
 <p>The RecordDescriptor class has a few more constructors concerned with joins and <a href="multiple-databases.html">accessing multiple databases</a>, but that’s not important for now. The basic structure described above is what you work with most of the time.</p>
 <div class="subpage-navigation">
