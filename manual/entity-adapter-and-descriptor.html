@@ -90,12 +90,10 @@ public class CustomerAdapter extends ObjectAdapter {
       new RecordDescriptor(CustomerEntity.class, TABLE, null)
         .row(COL_ID, &quot;getId&quot;, &quot;setId&quot;)
         .row(COL_NAME, &quot;getName&quot;, &quot;setName&quot;)
-        .row(COL_FIRST_NAME, &quot;getFirstName&quot;, &quot;setFirstName&quot;);
+        .row(COL_FIRST_NAME, &quot;getFirstName&quot;, &quot;setFirstName&quot;)
+        .key(COL_ID);
 
     public RecordDescriptor getDescriptor() { return red; }
-
-    private static String[] keyFields = new String[] { COL_ID };
-    public String[] getKeyFields() { return keyFields; }
 
     CustomerAdapter(CustomerEntity entity) { super(entity); }
 }</code></pre>
@@ -118,13 +116,14 @@ adapter.find();</code></pre>
 <ul>
 <li><p>The name of the entity class and the name of the database table which the entity class is mapped to. Preferably the table name is not specified as a string-literal but as a reference to a constant representing the table name. If you have a look on the outcome of PriDE’s code generator, there are appropriate constants generated and used.</p></li>
 <li><p>A reference to the descriptor of a base class. This is of interest when you build up an inheritance hierarchy between entity classes as explained in chapter <a href="entity-inheritance.html">Entity Inheritance</a>.</p></li>
-<li><p>A table row to attribute mapping by adding calls of the row() method for every row of interest. The row() method returns the descriptor object, making up a fluent API. Every row/attribute mapping consists of</p>
+<li><p>A table-row to attribute mapping by adding calls of the row() method for every row of interest. The row() method returns the descriptor object, making up a fluent API. Every row/attribute mapping consists of</p>
 <ul>
 <li>The name of the database column (similar to table names: avoid using string-literals here)</li>
 <li>The name of the getter method for the corresponding attribute in the entity class</li>
 <li>The name of the setter method</li>
 </ul>
 <p>The methods are the ones which the adapter is supposed to use for transporting entity attributes to the database via JDBC and vice versa. The getter methods’ return type implies which methods the adapter uses to access JDBC statements and result sets and how to translate the values to SQL syntax. Getters are mandatory whereas setters may be null in case of entity types that are never supposed to be written to the database. A typical example for this case are entity classes representing the result of SQL joins (see chapter <a href="joins.html">Joins</a>).</p></li>
+<li><p>An optional primary key definition by adding a call of the key() method with a list of column names making up the primary key. Alternatively you can use rowPK() instead of row() for the row mappings.</p></li>
 </ul>
 <p>The RecordDescriptor class has a few more constructors concerned with joins and <a href="multiple-databases.html">accessing multiple databases</a>, but that’s not important for now. The basic structure described above is what you work with most of the time.</p>
 <div class="subpage-navigation">
