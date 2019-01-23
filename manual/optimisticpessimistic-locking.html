@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Optimistic/Pessimistic Locking</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="../assets/css/main.css" />
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+		<div class="subpage-menu">
+			<a href="http://pride.pm"><i class="fa fa-home"></i> Home</a>
+		</div>
+		<section id="three" class="wrapper">
+			<div class="inner">
+<header id="title-block-header">
+<h1 class="title">Optimistic/Pessimistic Locking</h1>
+</header>
+<nav id="TOC">
+<ul>
+<li><a href="#optimistic-locking">Optimistic Locking</a></li>
+<li><a href="#pessimistic-locking">Pessimistic Locking</a></li>
+</ul>
+</nav>
+<p>Locking for concurrency control is not directly addressed by PriDE but can be achieved by simple patterns. Usually, the object locking strategy of an application is a more general design decision and nothing you decide individually for every single table / entity. The examples in the section therefore demonstrate pattern which can be encapsulated in base classes and need to be implemented only once.</p>
+<p>This manual will not go into details about what kind of locking to prefer over the other for which kind of business requirements. There lots of general introductions on concurrency control on the Internet, e.g. on <a href="https://en.wikipedia.org/wiki/Concurrency_control">Wikipedia</a>.</p>
+<h2 id="optimistic-locking">Optimistic Locking</h2>
+<p><a href="https://en.wikipedia.org/wiki/Optimistic_concurrency_control">Optimistic Locking</a> is a typical concept for the management of concurrent update access from multiple applications on the same record in a database. An update of an existing record is only performed if it has not been modified by someone else since the current application has read the record of interest from the DB the last time. If it was modified, the caller is informed about a concurrent access conflict. The concept requires a version counter in the table. Every update operation increments this version counter and performs the actual update only if the entity’s version counter value in memory is still the same as in the database.</p>
+<p>Optimistic locking only makes sense for single-record updates by primary key, so the essential aspect of the pattern is to override the update() method of an adapter class resp. a hybrid entity.</p>
+<p>The CUSTOMER table being used in almost all the manual examples, can be equipped for optimistic locking, by adding an appropriate counter:</p>
+<pre><code>create table LOCKABLECUSTOMER (
+    id integer not null primary key,
+    name varchar(20),
+    first_name varchar(30),
+    version integer not null
+);</code></pre>
+<p>The resulting entity class gets an appropriate attribute int version; and the entity’s update() method must be overridden like that:</p>
+<pre><code>@Override
+public int update() throws SQLException {
+    version++;
+    int numRows = update(where().and(COL_VERSION, version-1)); 
+    if (numRows == 0) {
+        version--;
+        throw new SQLException(&quot;optimistic lock error&quot;);
+    }
+    return numRows; 
+}</code></pre>
+<p>The update() method without parameters is the update by primary primary key, and the override above works as follows:</p>
+<ul>
+<li>The version number is incremented by 1 in the entity before actually updating the DB. So if the update goes through, the version number will also be incremented in the database.</li>
+<li>The where() call without parameters assembles a WhereCondition from the entity’s primary key attributes.</li>
+<li>The appended and() call extends the condition by a constraint that - beside the primary key - also the version number in the DB must match the former value.</li>
+<li>The method then calls an update() method with the extended WhereCondition and checks the number of affected rows.</li>
+<li>If the version number was already incremented in the database, the number of affected rows is 0 and the method reports an error. The version number is restored, just in case the application can handle the exception and works on with the entity. If your application is actually this robust, you should consider defining your own optimistic lock exception type to make this case easy to distinguish from other DB problems.</li>
+</ul>
+<p>The code may be well encapsulated in a base class for all entity types which require optimistic locking. You can find an appropriate <a href="https://github.com/j-pride/manual-example-code/blob/master/src/main/java/locks/OptimisticObject.java">base class</a> and derived <a href="https://github.com/j-pride/manual-example-code/blob/master/src/main/java/locks/OptimisticCustomer.java">OptimisticCustomer</a> class in package <a href="https://github.com/j-pride/manual-example-code/tree/master/src/main/java/locks">locks</a> of the PriDE manual source code repository on GitHub.</p>
+<h2 id="pessimistic-locking">Pessimistic Locking</h2>
+<p>In SQL databases, pessimistic locking is usually achieved by selecting-for-update operations. I.e. instead of overriding the update() method, pessimistic locking requires to override the find() method without parameters. Like the update() method without parameters, find() addresses the entity’s primary key and therefore is a single-record operation. As a difference to optimistric locking, it does not require any additional columns to organize the locking, However, it requires the database to actually support select-for-update which is sometimes not the case for server-less databases. SQLite e.g. doesn’t support select-for-update as any manipulative DB operates always locks the whole database.</p>
+<p>The following override will do the job:</p>
+<pre><code>@Override
+public boolean find() throws SQLException {
+    return find(where().forUpdate());
+}</code></pre>
+<p>As you already from the optimistic locking example, the method where() assembles a selection criterion based on the entity’s primary key attributes. The appended call of forUpdate() adds the required “… FOR UPDATE” to the constraint which then is used to call the find() method accepting a WhereCondition.</p>
+<p>Keep in mind that there are a few more find() methods which you may have to override. Method findXE() is based on find(), so it doesn’t need an extra override, but findRC() e.g. has its own implementation. The overrides can be well encapsulated in a base class for all entity types which require pessimistic locking. You can find an appropriate <a href="https://github.com/j-pride/manual-example-code/blob/master/src/main/java/locks/PessimisticObject.java">base class</a> and derived <a href="https://github.com/j-pride/manual-example-code/blob/master/src/main/java/locks/PessimisticCustomer.java">PessimisticCustomer</a> class in package <a href="https://github.com/j-pride/manual-example-code/tree/master/src/main/java/locks">locks</a> of the PriDE manual source code repository on GitHub.</p>
+<div class="subpage-navigation">
+<p>
+<a id="prev" href="joins.html"> Prev.</a>
+</p>
+</div>
+				</div>
+			</section>
+
+			<script src="https://j-pride.github.io/assets/js/jquery.min.js"></script>
+			<script src="https://j-pride.github.io/assets/js/skel.min.js"></script>
+			<script src="https://j-pride.github.io/assets/js/util.js"></script>
+			<!--[if lte IE 8]><script src="https://j-pride.github.io/assets/js/ie/respond.min.js"></script><![endif]-->
+			<script src="https://j-pride.github.io/assets/js/main.js"></script>
+</body>
+</html>
