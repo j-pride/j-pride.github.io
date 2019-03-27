@@ -28,6 +28,7 @@
 <nav id="TOC">
 <ul>
 <li><a href="#descriptor-structure">Descriptor structure</a></li>
+<li><a href="#attribute-type-mapping">Attribute Type Mapping</a></li>
 </ul>
 </nav>
 <p>The concept of O/R mapping requires three basic building blocks:</p>
@@ -126,6 +127,138 @@ adapter.find();</code></pre>
 <li><p>An optional primary key definition by adding a call of the key() method with a list of column names making up the primary key. Alternatively you can use rowPK() instead of row() for the row mappings.</p></li>
 </ul>
 <p>The RecordDescriptor class has a few more constructors concerned with joins and <a href="multiple-databases.html">accessing multiple databases</a>, but that’s not important for now. The basic structure described above is what you work with most of the time.</p>
+<h2 id="attribute-type-mapping">Attribute Type Mapping</h2>
+<p>The following table illustrates the mapping of Java object attribute types to SQL database field types as they are supported by PriDE. The row <em>‘JDBC type’</em> determines the type being used for the specified attribute type to access results from a JDBC ResultSet or to pass inputs to a JDBC PreparedStatement. The <em>‘SQL type’</em> specifies the actual SQL row types, the attributes can usually be mapped to. Not all SQL databases support all the mentioned type identifiers and it may also depend on the JDBC driver’s capabilities which mappings are supported. Primitive attribute types should of course only be used, if the corresponding row must not be NULL. Otherwise an exception will be thrown at runtime when attempting to process NULL values.</p>
+<table>
+<thead>
+<tr class="header">
+<th><strong>Java attribute type</strong></th>
+<th><strong>JDBC type</strong></th>
+<th><strong>SQL type</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>String</td>
+<td>String</td>
+<td>VARCHAR, VARCHAR2, NVARCHAR2, CHAR</td>
+</tr>
+<tr class="even">
+<td>java.util.Date</td>
+<td>java.sql.Date</td>
+<td>DATE, DATETIME, TIMESTAMP, TIME</td>
+</tr>
+<tr class="odd">
+<td>java.sql.Date</td>
+<td>java.sql.Date</td>
+<td>DATE, DATETIME, TIMESTAMP, TIME</td>
+</tr>
+<tr class="even">
+<td>java.sql.Timestamp</td>
+<td>java.sql.Timestamp</td>
+<td>DATETIME, TIMESTAMP, TIME</td>
+</tr>
+<tr class="odd">
+<td>int / Integer</td>
+<td>Integer</td>
+<td>INTEGER</td>
+</tr>
+<tr class="even">
+<td>float / Float</td>
+<td>Float</td>
+<td>DECIMAL, REAL</td>
+</tr>
+<tr class="odd">
+<td>double / Double</td>
+<td>Double</td>
+<td>DECIMAL, REAL</td>
+</tr>
+<tr class="even">
+<td>Any enum</td>
+<td>String</td>
+<td>VARCHAR, VARCHAR2, NVARCHAR2, CHAR</td>
+</tr>
+<tr class="odd">
+<td>boolean / Boolean</td>
+<td>Boolean</td>
+<td>BOOLEAN, INTEGER, SMALLINT, TINYINT, CHAR</td>
+</tr>
+<tr class="even">
+<td>BigDecimal</td>
+<td>BigDecimal</td>
+<td>DECIMAL, NUMBER</td>
+</tr>
+<tr class="odd">
+<td>long / Long</td>
+<td>Long</td>
+<td>INTEGER, DECIMAL, NUMBER, BIGINT</td>
+</tr>
+<tr class="even">
+<td>short / Short</td>
+<td>Short</td>
+<td>INTEGER, SMALLINT, TINYINT, DECIMAL</td>
+</tr>
+<tr class="odd">
+<td>byte / Byte</td>
+<td>Byte</td>
+<td>TINYINT</td>
+</tr>
+<tr class="even">
+<td>byte[]</td>
+<td>byte[]</td>
+<td>BLOB, LONGVARBINARY, VARBINARY</td>
+</tr>
+<tr class="odd">
+<td>java.sql.Blob</td>
+<td>java.sql.Blob</td>
+<td>BLOB, LONGVARBINARY, VARBINARY</td>
+</tr>
+<tr class="even">
+<td>java.sql.Clob</td>
+<td>java.sql.Clob</td>
+<td>CLOB, LONGVARCHAR</td>
+</tr>
+<tr class="odd">
+<td>java.sql.SQLXML / String</td>
+<td>java.sql.SQLXML</td>
+<td>java.sql.SQLXML</td>
+</tr>
+</tbody>
+</table>
+<p>Clobs and Blobs can only be used through PreparedStatements, i.e. you either have to access the entities with Clob / Blob attributes with PriDE’s <a href="prepared-operations.html">prepared operations</a> or you configure PriDE to use bind variables by default (see <a href="quick-start-tutorial.html">quick start tutorial</a>).</p>
+<p>The precision of dates and time stamps in the database vary significantly between different database vendors. E.g. although date rows were originally intended to represent dates without time portions in SQL databases, Oracle allows seconds precision instead and so does PriDE for Oracle. When using PriDE with plain SQL, dates and timestamps are rendered by appropriate database-specific formating functions like <code>to_date</code> or <code>to_timestamp</code> in Oracle, preserving the same precision as it applies to prepared statements.</p>
+<p>The interface <code>pm.pride.ResourceAccessor</code> provides the constant <em>SYSTIME_DEFAULT</em>. In update and insert operations this values will be translated to an expression which addresses the current database server time like <em>CURRENT_TIMESTAMP</em> in MySQL or <em>SYSDATE</em> in Oracle. This translation is only applied in plain SQL.</p>
+<p>You can tell PriDE to map a java.util.Date attribute to an SQL time stamp by providing the JDBC type in the row definition of the record descriptor as an additional parameter like that:</p>
+<pre><code>.row(&lt;columnname&gt;, &lt;getter&gt;, &lt;setter&gt;, java.sql.Timestamp.class)</code></pre>
+<p>There are a few more type conversions which can be expressed that way. E.g. Enums can be represented by their ordinals in the database by providing <code>java.lang.Integer.class</code> as additional parameter for the mapping of the corresponding attributes.</p>
+<p>The general pattern for arbitrary type conversion is to provide appropriate additional getter/setter pairs which encapsulate the conversion. To make clear, that these getters / setters are for internal use only, it is common practice to give the method names a leading underscore. Assume you have an enumeration type for coins with their value in cent like that:</p>
+<pre><code>public enum Coin {
+    FIVE_CENT(5), FIFTY_CENT(50), ONE_EURO(100);
+    
+    private int valueInCent;
+    Coin(int valueInCent) { this.valueInCent = valueInCent; }
+    int value() { return valueInCent; }
+}</code></pre>
+<p>If you map an attribute of this type to the database, PriDE expects an SQL row of type VARCHAR or a similar type to store values like ‘FIVE_CENT’ etc. If you want to represent the coins by their value in the database, you provide a type-converting getter-setter-pair for the corresponding attribute in the entity class:</p>
+<pre><code>class MyEntity {
+    private Coin myAttr;
+    
+    public int _getMyAttr() {
+        return myAttr.value();
+    }
+    
+    public void _setMyAttr(int v) {
+        for (Coin coin: Coin.values()) {
+            if (coin.value() == v) {
+                myAttr = coin;
+                return;
+            }
+        }
+        throw new IllegalArgumentException();
+    }
+}</code></pre>
+<p>Now you can use this getter setter pair to map the myAttr attribute to a DECIMAL table row, holding the coins’ values:</p>
+<pre><code>.row(&quot;MYATTR&quot;, &quot;_getMyAttr&quot;, &quot;_setMyCoin&quot;)</code></pre>
 <div class="subpage-navigation">
 <p>
 <a id="prev" href="quick-start-tutorial.html"> Prev.</a> | <a id="next" href="find-and-query.html">Next </a>

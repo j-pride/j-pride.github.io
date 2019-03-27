@@ -61,7 +61,7 @@ DatabaseFactory.setContext(DatabaseFactory.DEFAULT_CONTEXT);</code></pre>
 <p>A recommended design pattern is the so-called <em>best efforts 1 phase commit</em>. If you have to perform modifications in multiple databases within one transaction then do the actual work in all involved databases first and at the very end, run the commit calls for all databases. I.e. inconsistencies can only occur if any of the commit calls should fail which is a very rare situation. The pattern is suitable not only for databases but can be applied to any combined usage of transactional resources. In that case you should start the sequence of commit calls with the resource with the highest failure risk. E.g. you may assume that committing a JMS queue or a Kafka topic has a higher failure risk than committing a transaction on an Oracle database server based on decades of experience and hardening.</p>
 <div class="subpage-navigation">
 <p>
-<a id="prev" href="jse-jee-and-resourceaccessor.html"> Prev.</a>
+<a id="prev" href="jse-jee-and-resourceaccessor.html"> Prev.</a> | <a id="next" href="prepared-operations.html">Next </a>
 </p>
 </div>
 				</div>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Prepared Operations</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="../assets/css/main.css" />
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+		<div class="subpage-menu">
+			<a href="http://pride.pm"><i class="fa fa-home"></i> Home</a>
+		</div>
+		<section id="three" class="wrapper">
+			<div class="inner">
+<header id="title-block-header">
+<h1 class="title">Prepared Operations</h1>
+</header>
+<p>PriDE is designed to keep as much persistence logic as possible in Java code instead of writing stored procedures that reside in the database. This has several reasons:</p>
+<ul>
+<li>Stored procedures must be written in a highly vendor-specific language like Oracle’s PL/SQL, so the code is not compatible between different database systems. On the other hand, Java and PriDE-based persistence logic is widely compatible, allowing things like unit testing on a light-weight HSQL while working with an Oracle DB in production.</li>
+<li>As stored procedures are written in a different language that forces you to violate the DRY principle which is strongly emphasized by PriDE as one of the most valuable design principles for long-term code maintainability. E.g the stored procedure’s code can’t refer to constants defined in Java. They will often break at runtime not at compile time, and refactoring becomes a fragile job.</li>
+<li>You need an additional development environment and appropriate knowledge which can make things very complicated.</li>
+</ul>
+<p>Although there may still be good reasons to write stored procedures, you should at least know about PriDE’s capabilities to efficiently run database mass operations within Java. Some of the mass operation features have already been mentioned in earlier chapters:</p>
+<ul>
+<li>Query results are by default provided by ResultIterators, allowing to iterate through large amounts of results using a single entity. You can process millions of records without being afraid of memory shortage. See chapter <a href="find-and-query.html">Find and Query</a> for details.</li>
+<li>Methods spoolToArray() and spoolToList() of class ResultIterator allow to run multiple co-ordinates selects as an alternative to Joins when accessing data along 1:N relationships. This allows to minimize the actual data being transfered from the database to your application.</li>
+<li>Updates and deletes may get passed key field lists and WhereConditions to address multiple records with a single operation. See chapter <a href="insert-update-and-delete.html">Insert, Update, and Delete</a> for details.</li>
+<li>The class pm.pride.Database provides low-level API functions to assemble multi-record operations of arbitrary SQL structure. An example based on method sqlUpdate() can be found in chapter <a href="insert-update-and-delete.html">Insert, Update, and Delete</a>. Additional methods are sqlQuery() and sqlExecute().</li>
+</ul>
+<p>Prepared operations are a thin convenience layer combining JDBC’s concept of prepared statements with PriDE’s concept of O/R mapping based on record descriptors. PriDE provides the following prepared operation types:</p>
+<ul>
+<li>pm.pride.PreparedInsert</li>
+<li>pm.pride.PreparedUpdate</li>
+<li>pm.pride.PreparedSelect</li>
+</ul>
+<p>When you turn on the usage of bind variables (see configuration parameter pride.bindvars in the <a href="quick-start-tutorial.html">quick start tutorial</a>) PriDE will also use these classes internally to run database operations based on prepared statements. However, using the classes explicitly in your application code allows to use the same prepared statements for many operations without reinitializing it with every call. You can also use them in batch mode which allows to run thousands of operations per second.</p>
+<p>Consider the CUSTOMER table and the appropriate Customer entity class which is used all over this manual. If you need to insert thousands of customers in one turn, you should use the PreparedInsert class in a way like that:</p>
+<pre><code>Customer c = new Customer();
+PreparedInsert insert = new PreparedInsert(c.getDescriptor());
+for (int i = 0; i &lt; 100000; i++) {
+    c.setId(i);
+    c.setFirstName(&quot;Paddy-&quot; + i);
+    c.setName(&quot;Fingal&quot;);
+    insert.execute(c);
+}
+c.commit();</code></pre>
+<p>Running this example on an SQLite databases takes less than a second to insert 100.000 customers. On a local Oracle XE with a usual 4 core laptop it takes about 30 seconds, i.e. more than 3.000 inserts per second. But you can even speed up Oracle to SQLite’s performance by using batched operations instead:</p>
+<pre><code>Customer c = new Customer();
+PreparedInsert insert = new PreparedInsert(c.getDescriptor());
+for (int i = 0; i &lt; 100000; i++) {
+    c.setId(i);
+    c.setFirstName(&quot;Paddy-&quot; + i);
+    c.setName(&quot;Fingal&quot;);
+    insert.addBatch(c);
+}
+insert.executeBatch();
+c.commit();</code></pre>
+<p>With 100 thousand inserts per seconds, PriDE is a lot faster than all other O/R mapping tools for Java, even if you consider maximum tuning options. And you may do a lot of things with this performance before you have to consider using stored procedures. A key aspect for high performance is the network latency between the Java application and the database server. Mass operations are usually performed by batch programs rather than interactive clients or web sites. You should therefore keep the network distance between the Java batch programs and the database as short as possible. Best performance is achieved by co-locating both on the same server machine using the so-called loopback device and localhost addresses.</p>
+<p>When using prepared operations, you should keep in mind that they have an open JDBC prepared statement inside. So that you must not forget to close the operations when the job is done. Prepared operations implement the AutoCloseable interface, so you may use try-with-resources:</p>
+<pre><code>Customer c = new Customer();
+try (PreparedInsert insert = new PreparedInsert(c.getDescriptor())) {
+    //... do the job ...    
+}
+c.commit();</code></pre>
+<p>An examples for a mass insertion can by found in the class <a href="https://github.com/j-pride/manual-example-code/blob/master/src/main/java/mass/MassInsertClient.java">MassInsertClient</a> in the package <a href="https://github.com/j-pride/manual-example-code/tree/master/src/main/java/mass">mass</a> of the PriDE manual source code repository on GitHub.</p>
+<p>As you can see from the example, you don’t necessarily need a new entity for each call of execute() or addBatch(). So as you already know from the ResultIterator class the whole iteration may operate on a single entity. Tying both sides together, you can design fast and memory efficient ETL procedures in Java by reading records from a result iterator into a single entity, transforming it in place, and directly passing the result to a prepared operation.</p>
+<p>The class PreparedUpdate allows to run mass updates instead of insertions. By default, the class uses the definitions from the record descriptor passed in the constructor to tell which fields make up the key to identify a record and which other fields need to by updated. However, the class provides a few alternative constructors to define key fields and update fields separately.</p>
+<p>The class PreparedSelect is probably not useful for application code. It is used internally by PriDE.</p>
+<div class="subpage-navigation">
+<p>
+<a id="prev" href="multiple-databases.html"> Prev.</a>
+</p>
+</div>
+				</div>
+			</section>
+
+			<script src="https://j-pride.github.io/assets/js/jquery.min.js"></script>
+			<script src="https://j-pride.github.io/assets/js/skel.min.js"></script>
+			<script src="https://j-pride.github.io/assets/js/util.js"></script>
+			<!--[if lte IE 8]><script src="https://j-pride.github.io/assets/js/ie/respond.min.js"></script><![endif]-->
+			<script src="https://j-pride.github.io/assets/js/main.js"></script>
+</body>
+</html>
