@@ -5,16 +5,27 @@
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <title>Find and Query</title>
-  <style type="text/css">
-      code{white-space: pre-wrap;}
-      span.smallcaps{font-variant: small-caps;}
-      span.underline{text-decoration: underline;}
-      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
   </style>
   <link rel="stylesheet" href="../assets/css/main.css" />
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
 </head>
 <body>
 		<div class="subpage-menu">
@@ -25,46 +36,105 @@
 <header id="title-block-header">
 <h1 class="title">Find and Query</h1>
 </header>
-<nav id="TOC">
+<nav id="TOC" role="doc-toc">
 <ul>
-<li><a href="#find">Find</a></li>
-<li><a href="#query">Query</a><ul>
-<li><a href="#streaming">Streaming</a></li>
+<li><a href="#find" id="toc-find">Find</a></li>
+<li><a href="#query" id="toc-query">Query</a>
+<ul>
+<li><a href="#streaming" id="toc-streaming">Streaming</a></li>
 </ul></li>
-<li><a href="#selection-criteria">Selection criteria</a><ul>
-<li><a href="#wherecondition">WhereCondition</a></li>
-<li><a href="#arbitrary-criteria">Arbitrary Criteria</a></li>
+<li><a href="#selection-criteria" id="toc-selection-criteria">Selection
+criteria</a>
+<ul>
+<li><a href="#wherecondition"
+id="toc-wherecondition">WhereCondition</a></li>
+<li><a href="#arbitrary-criteria" id="toc-arbitrary-criteria">Arbitrary
+Criteria</a></li>
 </ul></li>
 </ul>
 </nav>
-<p>The terms “find” and “query” for data retrieval are used in the same sense in PriDE as you may know it from other persistence concepts. Finding means to select data with the expectation to retrieve 1 result or none treating the presence of multiple results as an exception case. The most common example is a selection by primary key.</p>
-<p>A query means to select data with an unpredictable number of result. PriDE is designed to take “unpredictable” literally and allows to process even millions of results in an efficient way in Java.</p>
+<p>The terms “find” and “query” for data retrieval are used in the same
+sense in PriDE as you may know it from other persistence concepts.
+Finding means to select data with the expectation to retrieve 1 result
+or none treating the presence of multiple results as an exception case.
+The most common example is a selection by primary key.</p>
+<p>A query means to select data with an unpredictable number of result.
+PriDE is designed to take “unpredictable” literally and allows to
+process even millions of results in an efficient way in Java.</p>
 <h2 id="find">Find</h2>
-<p>Examples for finding a record with PriDE were already part of the <a href="quick-start-tutorial.html">quick start tutorial</a> and the chapter about <a href="entity-adapter-and-descriptor.html">entity, adapter, and descriptor</a>. But let’s go into some details here for a deeper understanding. The important things to know:</p>
+<p>Examples for finding a record with PriDE were already part of the <a
+href="quick-start-tutorial.html">quick start tutorial</a> and the
+chapter about <a href="entity-adapter-and-descriptor.html">entity,
+adapter, and descriptor</a>. But let’s go into some details here for a
+deeper understanding. The important things to know:</p>
 <ul>
-<li>No matter if you are working with hybrid objects or a separation of entity and adapter - PriDE avoids creating entities by itself but expects you to provide them.</li>
-<li>Find operations work like a query-by-example. You provide an entity with all the primary key fields initialized and call the find() or findXE() method without parameters. This is a method of the entity class itself when using hybrid entities, otherwise it is a method of the corresponding adapter class.</li>
-<li>The result of the find operation is placed in the same entity which you provided the key fields by. The boolean return value of the find() method tells the caller if there was actually a matching record found. The findXE() method reports a missing match by an exception which is of interest for situations where a missing result is a unexpected case. Think of typical navigation like retrieving the customer who placed an order. You usually don’t expect the customer not being present in the database.</li>
-<li>The alternative method findRC() can be used to provide the resulting record in a <em>copy</em> of the original object. The copy is preferably created by cloning the original object in a clone() method with public visibility. This keeps the responsibility for object creation in the hands of the application code. Otherwise the entity class must provide a copy constructor or a default constructor.</li>
+<li>No matter if you are working with hybrid objects or a separation of
+entity and adapter - PriDE avoids creating entities by itself but
+expects you to provide them.</li>
+<li>Find operations work like a query-by-example. You provide an entity
+with all the primary key fields initialized and call the find() or
+findXE() method without parameters. This is a method of the entity class
+itself when using hybrid entities, otherwise it is a method of the
+corresponding adapter class.</li>
+<li>The result of the find operation is placed in the same entity which
+you provided the key fields by. The boolean return value of the find()
+method tells the caller if there was actually a matching record found.
+The findXE() method reports a missing match by an exception which is of
+interest for situations where a missing result is a unexpected case.
+Think of typical navigation like retrieving the customer who placed an
+order. You usually don’t expect the customer not being present in the
+database.</li>
+<li>The alternative method findRC() can be used to provide the resulting
+record in a <em>copy</em> of the original object. The copy is preferably
+created by cloning the original object in a clone() method with public
+visibility. This keeps the responsibility for object creation in the
+hands of the application code. Otherwise the entity class must provide a
+copy constructor or a default constructor.</li>
 </ul>
-<p>When you are working with a generated hybrid entity, a find operation by primary key fields is a single line of code like that:</p>
+<p>When you are working with a generated hybrid entity, a find operation
+by primary key fields is a single line of code like that:</p>
 <pre><code>Customer customer = new Customer(1);</code></pre>
-<p>PriDE’s generator produces a so-called “re-constructor” if the referred database table has a primary key. The re-constructor expects a parameter for all attributes making up the primary key, initializes the entity accordingly and calls the entity’s findXE() method. I.e. if the retrieval by primary key fails, the re-constructor throws a pm.pride.FindException. The FindException is derived from java.sql.SQLException which must be handled anyway.</p>
-<p>When you are working with separate adapter classes, the same operation takes two lines of code:</p>
+<p>PriDE’s generator produces a so-called “re-constructor” if the
+referred database table has a primary key. The re-constructor expects a
+parameter for all attributes making up the primary key, initializes the
+entity accordingly and calls the entity’s findXE() method. I.e. if the
+retrieval by primary key fails, the re-constructor throws a
+pm.pride.FindException. The FindException is derived from
+java.sql.SQLException which must be handled anyway.</p>
+<p>When you are working with separate adapter classes, the same
+operation takes two lines of code:</p>
 <pre><code>CustomerEntity customer = new CustomerEntity(1);
 new CustomerAdapter(customer).findXE();</code></pre>
 <h2 id="query">Query</h2>
-<p>Whenever selecting multiple records from the database, PriDE returns a pm.pride.ResultIterator to iterate through the results. The ResultIterator encapsulates a java.sql.ResultSet, i.e. it is an open database cursor which is suitable for any amount of results. Taking up the example from the <a href="quick-start-tutorial.html">quick start tutorial</a>, you can select all customers from the CUSTOMER table by the following lines of code:</p>
+<p>Whenever selecting multiple records from the database, PriDE returns
+a pm.pride.ResultIterator to iterate through the results. The
+ResultIterator encapsulates a java.sql.ResultSet, i.e. it is an open
+database cursor which is suitable for any amount of results. Taking up
+the example from the <a href="quick-start-tutorial.html">quick start
+tutorial</a>, you can select all customers from the CUSTOMER table by
+the following lines of code:</p>
 <pre><code>Customer customer = new Customer();
 ResultIterator ri = customer.queryAll();</code></pre>
-<p>To allow the processing of large amounts of records, the ResultIterator works slightly different from what you may be used to.</p>
+<p>To allow the processing of large amounts of records, the
+ResultIterator works slightly different from what you may be used
+to.</p>
 <ul>
-<li>To step through the results, you have to call the iterators next() method which returns false if there are no more results available.</li>
-<li>Instead of creating a new entity with every step, the iterator provides all results in the entity which the query was initiated from. I.e. every call of next() overwrites the data from the step before. No matter how many results you have, you will not run into memory problems when you directly process the results within the iteration loop.</li>
-<li>The first result from the query gets initially written to the entity, so the iteration process usually requires a do-while-loop rather than a while-loop.</li>
-<li>If there are no results at all, the query functions returns a ResultIterator which returns true from its isNull() method.</li>
+<li>To step through the results, you have to call the iterators next()
+method which returns false if there are no more results available.</li>
+<li>Instead of creating a new entity with every step, the iterator
+provides all results in the entity which the query was initiated from.
+I.e. every call of next() overwrites the data from the step before. No
+matter how many results you have, you will not run into memory problems
+when you directly process the results within the iteration loop.</li>
+<li>The first result from the query gets initially written to the
+entity, so the iteration process usually requires a do-while-loop rather
+than a while-loop.</li>
+<li>If there are no results at all, the query functions returns a
+ResultIterator which returns true from its isNull() method.</li>
 </ul>
-<p>Pulling all this together, an iteration for direct result processing looks like that, e.g. if we would like to print all customers to the console:</p>
+<p>Pulling all this together, an iteration for direct result processing
+looks like that, e.g. if we would like to print all customers to the
+console:</p>
 <pre><code>Customer customer = new Customer();
 ResultIterator ri = customer.queryAll();
 if (!ri.isNull()) {
@@ -76,8 +146,20 @@ if (!ri.isNull()) {
 else {
     System.out.println(&quot;No customers found&quot;);
 }</code></pre>
-<p>A ResultIterator must be closed when the iteration is over, because it holds an open java.sql.ResultSet inside which in turn holds an open database connection. For convenience, the ResultIterator closes its ResultSet automatically when your code iterates to the end or if there occurs a database exception while fetching results. So usually you don’t have to care about closing the iterator. For special cases, call the close() method.</p>
-<p>The direct iteration is a highly efficient option on the one hand (PriDE is a lot faster with this approach than any JPA implementation), but on the other hand it is not the typical case. Usually the amount of results is small and they don’t need to be processed on such a low layer of the application. Instead you may want to pass them as a list or array to a higher application layer where the business logic resides in. In this case, you can call appropriate functions on the ResultIterator:</p>
+<p>A ResultIterator must be closed when the iteration is over, because
+it holds an open java.sql.ResultSet inside which in turn holds an open
+database connection. For convenience, the ResultIterator closes its
+ResultSet automatically when your code iterates to the end or if there
+occurs a database exception while fetching results. So usually you don’t
+have to care about closing the iterator. For special cases, call the
+close() method.</p>
+<p>The direct iteration is a highly efficient option on the one hand
+(PriDE is a lot faster with this approach than any JPA implementation),
+but on the other hand it is not the typical case. Usually the amount of
+results is small and they don’t need to be processed on such a low layer
+of the application. Instead you may want to pass them as a list or array
+to a higher application layer where the business logic resides in. In
+this case, you can call appropriate functions on the ResultIterator:</p>
 <pre><code>// Extract the customers as list
 List&lt;Customer&gt; allCustomers = ri.toList(Customer.class);
 
@@ -86,65 +168,187 @@ List&lt;Customer&gt; allCustomers = ri.toList(Customer.class, 100);
 
 // Extract the customers as array
 Customer[] allCustomers = ri.toArray(Customer.class);</code></pre>
-<p>PriDE produces the entities in the lists and arrays in the same way as mentioned earlier for the findRC() method: by cloning the original entity with a public clone() method, by a copy constructor, getting passed the original entity as a parameter, or by a default constructor. All entity types generated by PriDE have a clone() method with public visibility implemented, based on Java’s protected default implementation. This is a single-line implementation, so it’s very simple to provide even if you are not using the generator.</p>
-<p>In general it is strongly recommended to define a base class for all entity types where all those standard capabilities are encapsulated. Not only a clone() implementation but also a reasonable default (reflection-based) toString() method and maybe even a set of standard attributes as explained in chapter <a href="entity-inheritance.html">Entity Inheritance</a>.</p>
+<p>PriDE produces the entities in the lists and arrays in the same way
+as mentioned earlier for the findRC() method: by cloning the original
+entity with a public clone() method, by a copy constructor, getting
+passed the original entity as a parameter, or by a default constructor.
+All entity types generated by PriDE have a clone() method with public
+visibility implemented, based on Java’s protected default
+implementation. This is a single-line implementation, so it’s very
+simple to provide even if you are not using the generator.</p>
+<p>In general it is strongly recommended to define a base class for all
+entity types where all those standard capabilities are encapsulated. Not
+only a clone() implementation but also a reasonable default
+(reflection-based) toString() method and maybe even a set of standard
+attributes as explained in chapter <a
+href="entity-inheritance.html">Entity Inheritance</a>.</p>
 <h3 id="streaming">Streaming</h3>
-<p>Another alternative form of result processing are the ResultIterator’s stream methods. There are two different methods available.</p>
-<p>The method <code>stream(Class)</code> provides the results as a “real” stream with a new result instance for every result. The resulting stream is suitable for any kind of Java stream operations but should be used with care when selecting a very large number of results combined with stream operations which have to keep all the results (e.g. sort and collect operations). This may cause serious memory problems.</p>
-<p>The method <code>streamOE(Class)</code> provides all results in the original entity just as it is the case in direct iterating and processing demonstrated above. This kind of stream is suitable for any amount of results but can only be used for a limited set of stream operations. Especially operations that rely on object identity will usually not work. Operations for direct processing like forEach() or count() won’t cause any problems. The direct processing example from the beginning of the query section would look like this when using streams:</p>
+<p>Another alternative form of result processing are the
+ResultIterator’s stream methods. There are two different methods
+available.</p>
+<p>The method <code>stream(Class)</code> provides the results as a
+“real” stream with a new result instance for every result. The resulting
+stream is suitable for any kind of Java stream operations but should be
+used with care when selecting a very large number of results combined
+with stream operations which have to keep all the results (e.g. sort and
+collect operations). This may cause serious memory problems.</p>
+<p>The method <code>streamOE(Class)</code> provides all results in the
+original entity just as it is the case in direct iterating and
+processing demonstrated above. This kind of stream is suitable for any
+amount of results but can only be used for a limited set of stream
+operations. Especially operations that rely on object identity will
+usually not work. Operations for direct processing like forEach() or
+count() won’t cause any problems. The direct processing example from the
+beginning of the query section would look like this when using
+streams:</p>
 <pre><code>Customer customer = new Customer();
 customer.queryAll().streamOE()
     .forEach(c -&gt; System.out.println(c));</code></pre>
-<p>Examples for find and query code can by found in the class <a href="https://github.com/j-pride/manual-example-code/tree/master/src/main/java/query/QueryClient.java">QueryClient</a> in the package <a href="https://github.com/j-pride/manual-example-code/tree/master/src/main/java/query">query</a> of the PriDE manual source code repository on GitHub.</p>
+<p>Examples for find and query code can by found in the class <a
+href="https://github.com/j-pride/manual-example-code/tree/master/src/main/java/query/QueryClient.java">QueryClient</a>
+in the package <a
+href="https://github.com/j-pride/manual-example-code/tree/master/src/main/java/query">query</a>
+of the PriDE manual source code repository on GitHub.</p>
 <h2 id="selection-criteria">Selection criteria</h2>
-<p>PriDE has a few different features to assemble SQL where-clauses for queries:</p>
+<p>PriDE has a few different features to assemble SQL where-clauses for
+queries:</p>
 <ul>
 <li>Query by example</li>
 <li>The builder class WhereCondition</li>
 <li>Completely self-defined conditions</li>
 </ul>
-<p>Query-by-example is something you already come across in the section about <a href="find.html">finder methods</a>. It is addressed by the method queryByExample(String… dbfields) which is available in every adapter and every hybrid entity class. The where-clause is assembled from an equality expression for all the database columns being passed to the function call where the values are taken from the corresponding attributes of the entity. Of course, the entity must be initialized accordingly first. Taking up the Customer entity from the <a href="quick-start-tutorial.html">quick start tutorial</a>, the following query-by-example would allow to find all customers with first name “Peter”:</p>
+<p>Query-by-example is something you already come across in the section
+about <a href="find.html">finder methods</a>. It is addressed by the
+method queryByExample(String… dbfields) which is available in every
+adapter and every hybrid entity class. The where-clause is assembled
+from an equality expression for all the database columns being passed to
+the function call where the values are taken from the corresponding
+attributes of the entity. Of course, the entity must be initialized
+accordingly first. Taking up the Customer entity from the <a
+href="quick-start-tutorial.html">quick start tutorial</a>, the following
+query-by-example would allow to find all customers with first name
+“Peter”:</p>
 <pre><code>Customer customer = new Customer();
 customer.setFirstName(&quot;Peter&quot;);
 ResultIterator ri = customer.queryByExample(Customer.COL_FIRST_NAME);</code></pre>
-<p>The query takes all the specified columns into account, considering also Null-values in appropriate attributes. E.g. passing Customer.COL_FIRST_NAME, Customer.COL_NAME to the query method without setting a name value in the customer entity, the resulting SQL query will look like this:</p>
+<p>The query takes all the specified columns into account, considering
+also Null-values in appropriate attributes. E.g. passing
+Customer.COL_FIRST_NAME, Customer.COL_NAME to the query method without
+setting a name value in the customer entity, the resulting SQL query
+will look like this:</p>
 <pre><code>select id,name,first_name from CUSTOMER where ( first_name = &#39;Peter&#39; AND name IS NULL )</code></pre>
-<p>Remember that yo can always check the SQL log file to find out what SQL statements have been assembled by PriDE. And always remember to use constants for the column names as you can see above rather than string literals. This allows you to keep track of which code depends on which aspects of your data model.</p>
+<p>Remember that yo can always check the SQL log file to find out what
+SQL statements have been assembled by PriDE. And always remember to use
+constants for the column names as you can see above rather than string
+literals. This allows you to keep track of which code depends on which
+aspects of your data model.</p>
 <h3 id="wherecondition">WhereCondition</h3>
-<p>Query-by-example is easy to use but limited to equality expressions. A more sophisticated tool in PriDE is the WhereCondition class. It allows to assemble more complicated queries with a fluent API as a compromise between syntax and type safety on the one hand and code readability and simplicity on the other hand. Lets start with a simple example of a where condition, producing the same query as above for an empty name and the first name “Paddy”:</p>
+<p>Query-by-example is easy to use but limited to equality expressions.
+A more sophisticated tool in PriDE is the WhereCondition class. It
+allows to assemble more complicated queries with a fluent API as a
+compromise between syntax and type safety on the one hand and code
+readability and simplicity on the other hand. Lets start with a simple
+example of a where condition, producing the same query as above for an
+empty name and the first name “Paddy”:</p>
 <pre><code>WhereCondition byFirstNameAndEmptyName =
-    new WhereCondition(Customer.COL_FIRST_NAME, &quot;Paddy&quot;)
+  new WhereCondition(Customer.COL_FIRST_NAME, &quot;Paddy&quot;)
     .and(Customer.COL_NAME, null);
 ResultIterator ri = new Customer().query(byFirstNameAndEmptyName);</code></pre>
 <p>The basic principle of the class is straight-forward:</p>
 <ul>
-<li>The function and() creates a sub-condition which is is AND concatenated with the condition being assembled so far. The same applies to the corresponding or() method.</li>
-<li>The and() function returns the WhereCondition itself which causes the class and its methods to become a fluent API.</li>
-<li>The and() function which only gets passed a field name/value pair produces an equality expression.</li>
-<li>The name/value pair passed to the constructor makes up the initial condition. To keep from mixing real constructor parameters with the first condition fragment, it is recommended to use the following form instead:</li>
+<li>The function and() creates a sub-condition which is AND concatenated
+with the condition being assembled so far. The same applies to the
+corresponding or() method.</li>
+<li>The and() function returns the WhereCondition itself which causes
+the class and its methods to become a fluent API.</li>
+<li>The and() function which only gets passed a field name/value pair
+produces an equality expression.</li>
+<li>The name/value pair passed to the constructor makes up the initial
+condition. To keep from mixing real constructor parameters with the
+first condition fragment, it is recommended to use the following form
+instead:</li>
 </ul>
 <pre><code>WhereCondition byFirstNameAndEmptyName = new WhereCondition()
-    .and(Customer.COL_FIRST_NAME, &quot;Paddy&quot;)
-    .and(Customer.COL_NAME, null);
+  .and(Customer.COL_FIRST_NAME, &quot;Paddy&quot;)
+  .and(Customer.COL_NAME, null);
 ResultIterator ri = new Customer().query(byFirstNameAndEmptyName);</code></pre>
-<p>It doesn’t make a difference if you start with the or() method or the and() method at the top. Both methods are available in the more flexible variant <code>xxx(String field, String operator, Object... value)</code>. The parameter <em>operator</em> is an SQL operator with the commonly known ones listed in the <em>Operator</em> interface within the WhereCondition class. Using String rather than a type-safe Enum keeps the API open for future extensions and vendor-specific operators. Multiple values can be passed for the operators WhereCondition.Operator.BETWEEN and WhereCondition.Operator.IN. E.g. selecting customers with first name “Paddy” or “Mary” can be expressed by</p>
+<p>It doesn’t make a difference if you start with the or() method or the
+and() method at the top. Both methods are available in the more flexible
+variant
+<code>xxx(String field, String operator, Object... value)</code>. The
+parameter <em>operator</em> is an SQL operator with the commonly known
+ones listed in the <em>Operator</em> interface within the WhereCondition
+class. Using String rather than a type-safe Enum keeps the API open for
+future extensions and vendor-specific operators. Multiple values can be
+passed for the operators WhereCondition.Operator.BETWEEN and
+WhereCondition.Operator.IN. E.g. selecting customers with first name
+“Paddy” or “Mary” can be expressed by</p>
 <pre><code>.and(COL_FIRST_NAME, IN, &quot;Paddy&quot;, &quot;Mary&quot;);</code></pre>
-<p>The variants <code>xxxNotNull(...)</code> will only add the sub-condition if the (first) field value differs from Null. This is of interest for the assembly of conditions from interactive search criteria input. An empty criterion usually means ‘do not consider’ rather than ‘must be empty’.</p>
-<p>The variant without parameters opens up a sub-condition which must be completed by function bracketClose(). The following condition looks for early customers (id less than 1000) that registered with a suspicious name “Mickey Mouse”:</p>
+<p>The variants <code>xxxNN(...)</code> will only add the sub-condition
+if the (first) field value differs from Null. This is of interest for
+the assembly of conditions from interactive search criteria input. An
+empty criterion usually means ‘do not consider’ rather than ‘must be
+empty’.</p>
+<p>The variant without parameters opens up a sub-condition which must be
+completed by function bracketClose(). The following condition looks for
+early customers (id less than 1000) that registered with a suspicious
+name “Mickey Mouse”:</p>
 <pre><code>WhereCondition byMickeyMouse = new WhereCondition()
-    .and(COL_ID, LESS, 1000)
-    .and()
-        .or(COL_FIRST_NAME, IN, &quot;Mickey&quot;, &quot;Mouse&quot;)
-        .or(COL_NAME, IN, &quot;Mickey&quot;, &quot;Mouse&quot;)
-    .bracketClose();</code></pre>
-<p>What of you are interested in other suspicious cases where name and first name are equal. In this case, the value is a field name itself and you have to bypass the value formatting. This is achieved by passing pre-formatted SQL values like that:</p>
+  .and(COL_ID, LESS, 1000)
+  .and()
+    .or(COL_FIRST_NAME, IN, &quot;Mickey&quot;, &quot;Mouse&quot;)
+    .or(COL_NAME, IN, &quot;Mickey&quot;, &quot;Mouse&quot;)
+  .bracketClose();</code></pre>
+<p>You may also apply SQL functions to both fields and values. E.g. if
+the Mickey Mouse query should run case-insensitive you may use the LOWER
+SQL function like that:</p>
+<pre><code>WhereCondition byMickeyMouse = new WhereCondition()
+  .or(lower(COL_FIRST_NAME), IN, &quot;mickey&quot;, &quot;mouse&quot;);</code></pre>
+<p>The method <code>lower</code> is a static constructor method in class
+<code>WhereFunction</code>, which provides convenience methods for the
+most commonly known SQL functions. The contructor method
+<code>WhereFunction#function</code> allows to apply any available,
+possibly vendor-specific function.</p>
+<p>What of you are interested in other suspicious cases where name and
+first name are equal. In this case, the value is a field name itself and
+you have to bypass the value formatting. This is achieved by passing
+pre-formatted SQL values like that:</p>
 <pre><code>.and(COL_FIRST_NAME, SQL.pre(COL_NAME))</code></pre>
-<p>Finally the WhereCondition can be extended by ordering and grouping clauses. E.g. the following condition selects all customers ordered by name and first name:</p>
+<p>Finally the WhereCondition can be extended by ordering and grouping
+clauses. E.g. the following condition selects all customers ordered by
+name and first name:</p>
 <pre><code>new WhereCondition().orderBy(COL_NAME).orderBy(COL_FIRST_NAME)</code></pre>
-<p>Especially when you select data <em>in order</em>, the ResultIterator provides the additional methods spoolToList() and spoolToArray() to read results in chunks. This allows to run multiple co-ordinated selects in parallel as an alternative to joins when selecting along 1:N relationships. Joins cause a duplication of transfer data in such a case which may cause mentionable latency in very large selections.</p>
-<p>And finally finally the methods bindvars…() in the WhereCondition class give you fine-grained control over which parts of the expression should use bind variables and which ones should be plain SQL. Bind variables become a relevant issue for databases on heavy duty and therefore are also discussed in the <a href="prepared-operations.html">prepared operations chapter</a>.</p>
+<p>Especially when you select data <em>in order</em>, the ResultIterator
+provides the additional methods spoolToList() and spoolToArray() to read
+results in chunks. This allows to run multiple co-ordinated selects in
+parallel as an alternative to joins when selecting along 1:N
+relationships. Joins cause a duplication of transfer data in such a case
+which may cause mentionable latency in very large selections.</p>
+<p>And finally finally the methods bindvars…() in the WhereCondition
+class give you fine-grained control over which parts of the expression
+should use bind variables and which ones should be plain SQL. Bind
+variables become a relevant issue for databases on heavy duty and
+therefore are also discussed in the <a
+href="prepared-operations.html">prepared operations chapter</a>.</p>
 <h3 id="arbitrary-criteria">Arbitrary Criteria</h3>
-<p>When the going gets tough there is a method <code>query(String where)</code> available in all adapters and hybrid entities. The function gets passed a fully assembled where-clause without the leading where keyword. It takes any limitations away but also a lot of convenience and safety. Assembly of complicated SQL expressions may not only become an issue in where-clauses but in any multi-record operation likes joins, merge statements, or mass updates. PriDE can help you assembling these expressions with the class pm.pride.SQLExpressionBuilder resp. the function pride.pm.SQL.build(). It preserves the native readability of complicated SQL on the one hand and allows you to work with table name and column name constants on the other hand to preserve code dependency tracking. In the preceding chapters you learned already that the PriDE principles heavily emphasize this central aspect for robust application design. The expression builder is addressed in a <a href="sql-expression-builder.html">separate chapter</a>. However, to give you a first impression, here is an example how to build the most complicated expression above - the Mickey Mouse case - using the expression builder:</p>
+<p>When the going gets tough there is a method
+<code>query(String where)</code> available in all adapters and hybrid
+entities. The function gets passed a fully assembled where-clause
+without the leading where keyword. It takes any limitations away but
+also a lot of convenience and safety. Assembly of complicated SQL
+expressions may not only become an issue in where-clauses but in any
+multi-record operation likes joins, merge statements, or mass updates.
+PriDE can help you assembling these expressions with the class
+pm.pride.SQLExpressionBuilder resp. the function pride.pm.SQL.build().
+It preserves the native readability of complicated SQL on the one hand
+and allows you to work with table name and column name constants on the
+other hand to preserve code dependency tracking. In the preceding
+chapters you learned already that the PriDE principles heavily emphasize
+this central aspect for robust application design. The expression
+builder is addressed in a <a href="sql-expression-builder.html">separate
+chapter</a>. However, to give you a first impression, here is an example
+how to build the most complicated expression above - the Mickey Mouse
+case - using the expression builder:</p>
 <pre><code>String byMickeyMouse = SQL.build(
     &quot;@ID &lt; 1000 AND (&quot; +
     &quot;  @FIRST_NAME IN (&#39;Mickey&#39;, &#39;Mouse&#39;) OR &quot; +
@@ -152,7 +356,15 @@ ResultIterator ri = new Customer().query(byFirstNameAndEmptyName);</code></pre>
     &quot;)&quot;,
     COL_ID, COL_FIRST_NAME, COL_NAME);
 ResultIterator ri = new Customer().query(byMickeyMouse);</code></pre>
-<p>This is a very limited example but you may already recognize the advantage over using the convenient WhereCondition fluent API: The SQL code is plain to see in nearly its native structure and notation although the actual assembly still makes use of the table and column name constants. The expression string may contain ? characters for bind variables. In this case, the variable values must be appended to the expression in the query() method call. The following example uses that feature for the ID threshold of 1000, making up the same selection as above:</p>
+<p>This is a very limited example but you may already recognize the
+advantage over using the convenient WhereCondition fluent API: The SQL
+code is plain to see in nearly its native structure and notation
+although the actual assembly still makes use of the table and column
+name constants. The expression string may contain ? characters for bind
+variables. In this case, the variable values must be appended to the
+expression in the query() method call. The following example uses that
+feature for the ID threshold of 1000, making up the same selection as
+above:</p>
 <pre><code>String byMickeyMouse = SQL.build(
     &quot;@ID &lt; ? AND (&quot; +
     &quot;  @FIRST_NAME IN (&#39;Mickey&#39;, &#39;Mouse&#39;) OR &quot; +
@@ -160,11 +372,20 @@ ResultIterator ri = new Customer().query(byMickeyMouse);</code></pre>
     &quot;)&quot;,
     COL_ID, COL_FIRST_NAME, COL_NAME);
 ResultIterator ri = new Customer().query(byMickeyMouse, 1000);</code></pre>
-<p>Using bind variables is the easiest way for you as a developer to overcome the problem of value formating, which may become a bit tricky for complex data types like dates and timestamps. However, this should of course not be the main reason to use bind variables. See chapter <a href="prepared-operations.html">Prepared Operations</a> for purposeful usage. As long as you are working with small databases, it is OK just to utilize the formatting side effect.</p>
-<p>If you want to learn more about the expression builder right now, read the chapter <a href="sql-expression-builder.html">SQL Expression Builder</a>.</p>
+<p>Using bind variables is the easiest way for you as a developer to
+overcome the problem of value formating, which may become a bit tricky
+for complex data types like dates and timestamps. However, this should
+of course not be the main reason to use bind variables. See chapter <a
+href="prepared-operations.html">Prepared Operations</a> for purposeful
+usage. As long as you are working with small databases, it is OK just to
+utilize the formatting side effect.</p>
+<p>If you want to learn more about the expression builder right now,
+read the chapter <a href="sql-expression-builder.html">SQL Expression
+Builder</a>.</p>
 <div class="subpage-navigation">
 <p>
-<a id="prev" href="entity-adapter-and-descriptor.html"> Prev.</a> | <a id="next" href="insert-update-and-delete.html">Next </a>
+<a id="prev" href="entity-adapter-and-descriptor.html"> Prev.</a> |
+<a id="next" href="insert-update-and-delete.html">Next </a>
 </p>
 </div>
 				</div>

@@ -5,16 +5,27 @@
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <title>About PriDE</title>
-  <style type="text/css">
-      code{white-space: pre-wrap;}
-      span.smallcaps{font-variant: small-caps;}
-      span.underline{text-decoration: underline;}
-      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
   </style>
   <link rel="stylesheet" href="../assets/css/main.css" />
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
 </head>
 <body>
 		<div class="subpage-menu">
@@ -25,37 +36,99 @@
 <header id="title-block-header">
 <h1 class="title">About PriDE</h1>
 </header>
-<nav id="TOC">
+<nav id="TOC" role="doc-toc">
 <ul>
-<li><a href="#about-this-manual">About this manual</a></li>
+<li><a href="#about-this-manual" id="toc-about-this-manual">About this
+manual</a></li>
 </ul>
 </nav>
-<p>PriDE is the Java world’s smallest object-relational mapper for SQL databases. O/R mapping is the wide-spread approach to map records of a relation SQL database to objects of an object-oriented application. The application should operate on its persistent entities as object-oriented as possible, not regarding that some of them come from a database or must be saved in one. PriDE provides functionality to</p>
+<p>PriDE is the Java world’s smallest object-relational mapper for SQL
+databases. O/R mapping is the wide-spread approach to map records of a
+relation SQL database to objects of an object-oriented application. The
+application should operate on its persistent entities as object-oriented
+as possible, not regarding that some of them come from a database or
+must be saved in one. PriDE provides functionality to</p>
 <ul>
 <li>Describe the mapping of database tables to Java classes</li>
-<li>Read and write data records without accessing the complicated JDBC interface, and - as far as possible - don’t write any SQL at all</li>
-<li>Simplify the assembly of complicated SQL expressions and selection conditions</li>
+<li>Read and write data records without accessing the complicated JDBC
+interface, and - as far as possible - don’t write any SQL at all</li>
+<li>Simplify the assembly of complicated SQL expressions and selection
+conditions</li>
 </ul>
-<p>While O/R mapping is usually based on single-object operations, PriDE also supports efficient database mass processing within Java. The goal is to avoid shifting application logic into procedures within the database as far as possible and not to break the DRY principle. However, if stored procedures and functions are required sometimes, PriDE provides a convenient way to call them.</p>
-<p>PriDE was designed for usage in JSE and JEE environments and is used identically everywhere except some initialization operations and the transaction management. The framework follows a very pragmatic approach to provide basic development support quickly and easily. It does not claim to conform with established persistence management standards but follows common design patterns and proved to be suitable in mission-critical projects over many years. The <a href="feature-list.html">detailed feature list</a> may help to figure out whether PriDE meets the requirements of individual development projects, and allows to roughly compare this toolkit with existing well-known O/R mapping products and standards like JPA, JOOQ or MyBatis.</p>
-<p>PriDE is so small that it can actually be understood in any single line of its code, providing the developer full control over how data is exchanged between an SQL database and a Java application. The runtime library is less than 200 kByte in size without any dependencies beside the JDBC driver library of the database in use.</p>
-<p>Did you ever wonder how to conveniently access your SQLite database in a mobile application which has to keep its footprint small? Well, here is your answer :-)</p>
-<p>Or did you ever worked in a multi-million lines of code project and got the feeling that JPA magic causes more loss of control than convenience? Guess what the alternative may be.</p>
-<p>The chapter <a href="pride-design-principles.html">PriDE design principles</a> gives an overview about the concepts which the framework is based on. However, before diving into more theory, it is recommended to walk through the <a href="quick-start-tutorial.html">quick start tutorial</a> and get into touch with the real world.</p>
+<p>While O/R mapping is usually based on single-object operations, PriDE
+also supports efficient database mass processing within Java. The goal
+is to avoid shifting application logic into procedures within the
+database as far as possible and not to break the DRY principle. However,
+if stored procedures and functions are required sometimes, PriDE
+provides a convenient way to call them.</p>
+<p>PriDE was designed for usage in JSE and JEE environments and is used
+identically everywhere except some initialization operations and the
+transaction management. The framework follows a very pragmatic approach
+to provide basic development support quickly and easily. It does not
+claim to conform with established persistence management standards but
+follows common design patterns and proved to be suitable in
+mission-critical projects over many years. The <a
+href="feature-list.html">detailed feature list</a> may help to figure
+out whether PriDE meets the requirements of individual development
+projects, and allows to roughly compare this toolkit with existing
+well-known O/R mapping products and standards like JPA, JOOQ or
+MyBatis.</p>
+<p>PriDE is so small that it can actually be understood in any single
+line of its code, providing the developer full control over how data is
+exchanged between an SQL database and a Java application. The runtime
+library is less than 200 kByte in size without any dependencies beside
+the JDBC driver library of the database in use.</p>
+<p>Did you ever wonder how to conveniently access your SQLite database
+in a mobile application which has to keep its footprint small? Well,
+here is your answer :-)</p>
+<p>Or did you ever worked in a multi-million lines of code project and
+got the feeling that JPA magic causes more loss of control than
+convenience? Guess what the alternative may be.</p>
+<p>The chapter <a href="pride-design-principles.html">PriDE design
+principles</a> gives an overview about the concepts which the framework
+is based on. However, before diving into more theory, it is recommended
+to walk through the <a href="quick-start-tutorial.html">quick start
+tutorial</a> and get into touch with the real world.</p>
 <h2 id="about-this-manual">About this manual</h2>
-<p>This manual gives you a complete overview about PriDE’s standard functionality, design patterns and design principles. It is not mandatory to work through all the details unless you want to become an expert. However, it is strongly recommended to begin with the <a href="quick-start-tutorial.html">quick start tutorial</a> as many code fragments in other chapters come back to the quick start example. The chapters <a href="find-and-query.html">Find and Query</a> and <a href="insert-update-and-delete.html">Insert, Update, and Delete</a> describe the core functionality you should become familiar with. All other chapters describe special aspects which you can dive into, when the time has come.</p>
-<p>Many code fragments in this manual refer to existing example code which is available in an <a href="https://github.com/j-pride/manual-example-code">appropriate repository on GitHub</a>. The repository includes a <a href="https://github.com/j-pride/manual-example-code/blob/master/pom.xml">pom.xml</a> file to run all examples on a local SQLite database. To have all source code at your fingertips at any time it is recommended to</p>
+<p>This manual gives you a complete overview about PriDE’s standard
+functionality, design patterns and design principles. It is not
+mandatory to work through all the details unless you want to become an
+expert. However, it is strongly recommended to begin with the <a
+href="quick-start-tutorial.html">quick start tutorial</a> as many code
+fragments in other chapters come back to the quick start example. The
+chapters <a href="find-and-query.html">Find and Query</a> and <a
+href="insert-update-and-delete.html">Insert, Update, and Delete</a>
+describe the core functionality you should become familiar with. All
+other chapters describe special aspects which you can dive into, when
+the time has come.</p>
+<p>Many code fragments in this manual refer to existing example code
+which is available in an <a
+href="https://github.com/j-pride/manual-example-code">appropriate
+repository on GitHub</a>. The repository includes a <a
+href="https://github.com/j-pride/manual-example-code/blob/master/pom.xml">pom.xml</a>
+file to run all examples on a local SQLite database. To have all source
+code at your fingertips at any time it is recommended to</p>
 <ul>
-<li>clone the repository (<code>git clone https://github.com/j-pride/manual-example-code.git</code>) and</li>
+<li>clone the repository
+(<code>git clone https://github.com/j-pride/manual-example-code.git</code>)
+and</li>
 <li>build the project using Maven (<code>mvn clean compile</code>)</li>
 </ul>
-<p>At March 2019, the PriDE 3 manual is still work in progress. Beside the core chapters above there are chapters coming soon for the following aspects</p>
+<p>At March 2019, the PriDE 3 manual is still work in progress. Beside
+the core chapters above there are chapters coming soon for the following
+aspects</p>
 <h4 id="calling-stored-procedures">Calling Stored Procedures</h4>
 <h4 id="pride-design-principles">PriDE Design Principles</h4>
-<p>A good information source for features which are not yet covered by this manual are PriDE’s unit tests which you can find on <a href="https://github.com/j-pride/pride.pm/tree/master/src/test/java/basic">GitHub</a>. You may also consult the manual from PriDE version 2 which is available on <a href="http://pride.sourceforge.net/PriDE.html">SourceForge</a>.</p>
+<p>A good information source for features which are not yet covered by
+this manual are PriDE’s unit tests which you can find on <a
+href="https://github.com/j-pride/pride.pm/tree/master/src/test/java/basic">GitHub</a>.
+You may also consult the manual from PriDE version 2 which is available
+on <a
+href="http://pride.sourceforge.net/PriDE.html">SourceForge</a>.</p>
 <div class="subpage-navigation">
 <p>
-<a id="prev" href="pride-3-user-manual.html"> Prev.</a> | <a id="next" href="quick-start-tutorial.html">Next </a>
+<a id="prev" href="pride-3-user-manual.html"> Prev.</a> |
+<a id="next" href="quick-start-tutorial.html">Next </a>
 </p>
 </div>
 				</div>

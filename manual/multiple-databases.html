@@ -5,16 +5,27 @@
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <title>Multiple Databases</title>
-  <style type="text/css">
-      code{white-space: pre-wrap;}
-      span.smallcaps{font-variant: small-caps;}
-      span.underline{text-decoration: underline;}
-      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
   </style>
   <link rel="stylesheet" href="../assets/css/main.css" />
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
 </head>
 <body>
 		<div class="subpage-menu">
@@ -25,15 +36,27 @@
 <header id="title-block-header">
 <h1 class="title">Multiple Databases</h1>
 </header>
-<nav id="TOC">
+<nav id="TOC" role="doc-toc">
 <ul>
-<li><a href="#multi-database-transactions">Multi-Database Transactions</a></li>
+<li><a href="#multi-database-transactions"
+id="toc-multi-database-transactions">Multi-Database
+Transactions</a></li>
 </ul>
 </nav>
-<p>You may access multiple databases in an application, using PriDE’s concept of a <em>database context</em>. As long as you don’t explicitly address particular contexts, you are implicitly working with a default context. If you recall the chapter about <a href="jse-jee-and-resourceaccessor.html">resource accessors</a> and the the application bootstrap, there appeared two calls which initialized the default context:</p>
+<p>You may access multiple databases in an application, using PriDE’s
+concept of a <em>database context</em>. As long as you don’t explicitly
+address particular contexts, you are implicitly working with a default
+context. If you recall the chapter about <a
+href="jse-jee-and-resourceaccessor.html">resource accessors</a> and the
+the application bootstrap, there appeared two calls which initialized
+the default context:</p>
 <pre><code>DatabaseFactory.setDatabaseName(...)
 DatabaseFactory.setResourceAccessor(...);</code></pre>
-<p>If you want to work with multiple databases, you have to initialize multiple contexts in the bootstrap in the same manner. The contexts are addressed by name and you perform a context switch by calling the DatabaseFactory’s static method setContext(). Switching to a context which doesn’t yet exist, causes the context to be created.</p>
+<p>If you want to work with multiple databases, you have to initialize
+multiple contexts in the bootstrap in the same manner. The contexts are
+addressed by name and you perform a context switch by calling the
+DatabaseFactory’s static method setContext(). Switching to a context
+which doesn’t yet exist, causes the context to be created.</p>
 <pre><code>// Initialize the default database context
 DatabaseFactory.setDatabaseName(...)
 DatabaseFactory.setResourceAccessor(...);
@@ -47,21 +70,62 @@ DatabaseFactory.setResourceAccessor(...);
 
 // Switch back to the default context
 DatabaseFactory.setContext(DatabaseFactory.DEFAULT_CONTEXT);</code></pre>
-<p>Alternatively you can add a context without switching back and forth by calling method addContext().</p>
+<p>Alternatively you can add a context without switching back and forth
+by calling method addContext().</p>
 <p>There are two ways how to work with these contexts:</p>
 <ul>
-<li><p>By explicit context switching as demonstrated above which will cause subsequent database operations to operate on the current context. As context switching is a global configuration change, this is only suitable for applications without concurrent access by multiple users, e.g. fat clients or batch applications. You should never use that in a server application.</p></li>
-<li><p>By associating entity types to different contexts. This is achieved by a call of the context() method when constructing the appropriate RecordDescriptor</p>
+<li><p>By explicit context switching as demonstrated above which will
+cause subsequent database operations to operate on the current context.
+As context switching is a global configuration change, this is only
+suitable for applications without concurrent access by multiple users,
+e.g. fat clients or batch applications. You should never use that in a
+server application.</p></li>
+<li><p>By associating entity types to different contexts. This is
+achieved by a call of the context() method when constructing the
+appropriate RecordDescriptor</p>
 <pre><code>new RecordDescriptor(...)
     .context(&quot;other-db&quot;);</code></pre>
-<p>All database operations that are based on that record descriptor will operate on the associated context. A global context switch is not required for that, so this concept will also work in server applications. Usually this is also the more convenient variant. However, if you make use of this, make sure that your application either doesn’t call context-dependent static methods of the DatabaseFactory class or that it is using them safely. Earlier chapters of this manual introduced the method call DatabaseFactory.getDatabase() to get access to a lower operation level. This call returns a Database object form the <em>current context</em> which of course may be the wrong one if you don’t switch it. In a multi-database server application you should rather call the alternative getDatabase(String) method which gets passed a context name.</p></li>
+<p>All database operations that are based on that record descriptor will
+operate on the associated context. A global context switch is not
+required for that, so this concept will also work in server
+applications. Usually this is also the more convenient variant. However,
+if you make use of this, make sure that your application either doesn’t
+call context-dependent static methods of the DatabaseFactory class or
+that it is using them safely. Earlier chapters of this manual introduced
+the method call DatabaseFactory.getDatabase() to get access to a lower
+operation level. This call returns a Database object form the
+<em>current context</em> which of course may be the wrong one if you
+don’t switch it. In a multi-database server application you should
+rather call the alternative getDatabase(String) method which gets passed
+a context name.</p></li>
 </ul>
 <h2 id="multi-database-transactions">Multi-Database Transactions</h2>
-<p>Although SQL database usually provide very good transaction safety for their own, the transaction management across <em>multiple</em> independent databases is a separate challenge. If your are working in a JEE environment, the application server should provide a safe transaction coordination for the involved databases, e.g. a <a href="https://en.wikipedia.org/wiki/Two-phase_commit_protocol">2 phase commit protocol</a>. In a JSE environment you either have to integration a transaction manager like <a href="https://www.atomikos.com/">Atomikos</a> or follow design patterns that minimize the risk of data inconsistencies.</p>
-<p>A recommended design pattern is the so-called <em>best efforts 1 phase commit</em>. If you have to perform modifications in multiple databases within one transaction then do the actual work in all involved databases first and at the very end, run the commit calls for all databases. I.e. inconsistencies can only occur if any of the commit calls should fail which is a very rare situation. The pattern is suitable not only for databases but can be applied to any combined usage of transactional resources. In that case you should start the sequence of commit calls with the resource with the highest failure risk. E.g. you may assume that committing a JMS queue or a Kafka topic has a higher failure risk than committing a transaction on an Oracle database server based on decades of experience and hardening.</p>
+<p>Although SQL database usually provide very good transaction safety
+for their own, the transaction management across <em>multiple</em>
+independent databases is a separate challenge. If your are working in a
+JEE environment, the application server should provide a safe
+transaction coordination for the involved databases, e.g. a <a
+href="https://en.wikipedia.org/wiki/Two-phase_commit_protocol">2 phase
+commit protocol</a>. In a JSE environment you either have to integration
+a transaction manager like <a
+href="https://www.atomikos.com/">Atomikos</a> or follow design patterns
+that minimize the risk of data inconsistencies.</p>
+<p>A recommended design pattern is the so-called <em>best efforts 1
+phase commit</em>. If you have to perform modifications in multiple
+databases within one transaction then do the actual work in all involved
+databases first and at the very end, run the commit calls for all
+databases. I.e. inconsistencies can only occur if any of the commit
+calls should fail which is a very rare situation. The pattern is
+suitable not only for databases but can be applied to any combined usage
+of transactional resources. In that case you should start the sequence
+of commit calls with the resource with the highest failure risk. E.g.
+you may assume that committing a JMS queue or a Kafka topic has a higher
+failure risk than committing a transaction on an Oracle database server
+based on decades of experience and hardening.</p>
 <div class="subpage-navigation">
 <p>
-<a id="prev" href="jse-jee-and-resourceaccessor.html"> Prev.</a> | <a id="next" href="prepared-operations.html">Next </a>
+<a id="prev" href="jse-jee-and-resourceaccessor.html"> Prev.</a> |
+<a id="next" href="prepared-operations.html">Next </a>
 </p>
 </div>
 				</div>
